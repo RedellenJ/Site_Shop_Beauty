@@ -1,12 +1,78 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="Img/Logos/Logo3.png">
     <title>Shop Beauty</title>
+
+    <link rel="icon" type="image/png" href="Img/Logos/Logo3.png">
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
+    <div class="top-bar"></div>
+
+    <header class="header">
+        <div class="center-group">
+            <div class="logo">
+                <a href="index.html" aria-label="Ir para a página inicial">
+                    <img src="Img/Logos/Logo1.png" alt="Logo">
+                </a>
+            </div>
+
+            <div class="search">
+                <input type="text" placeholder="O que você está buscando?">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a class="action-link" href="login.html">
+                <i class="fas fa-user"></i>
+                <span>Faça login ou <br> cadastre-se</span>
+            </a>
+
+            <a class="action-link" href="carrinho.html">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Minha<br> sacola</span>
+            </a>
+        </div>
+    </header>
+
+    <nav class="menu">
+        <ul>
+            <li><a href="index.html">INÍCIO</a></li>
+            <li><a href="produtos.html">PRODUTOS</a></li>
+            <li><a href="contato.html">CONTATO</a></li>
+            <li><a href="trocas-devolucoes.html">TROCAS OU DEVOLUÇÕES</a></li>
+            <li><a href="politica-privacidade.html">POLÍTICA DE PRIVACIDADE</a></li>
+            <li><a href="quem-somos.html">QUEM SOMOS</a></li>
+        </ul>
+    </nav>
+
+    <section class="banner">
+        <div class="arrow left">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+
+        <div class="arrow right">
+            <i class="fas fa-arrow-right"></i>
+        </div>
+    </section>
+
+    <div class="dots">
+        <span></span>
+        <span class="active"></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <script src="scripts.js"></script>
 </body>
 </html>
+
+
