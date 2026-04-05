@@ -76,23 +76,94 @@
       </ul>
     </nav>
 
-    <section class="banner">
-      <div class="arrow left">
-        <i class="fas fa-arrow-left"></i>
+    <div class="breadcrumb">
+      <span>Você está em:</span>
+      <a class="breadcrumb-home" href="index.html">INÍCIO</a>
+      <span class="separator">&gt;</span>
+      <span class="breadcrumb-current">CONTATO</span>
+    </div>
+
+    <section class="contact-hero">
+      <img class="contact-bg" src="Img/Logos/Logo3.png" alt="Logo de fundo" />
+
+      <div class="contact-column contact-info">
+        <h1>NOSSOS CONTATOS</h1>
+
+        <div class="contact-list">
+          <a
+            class="contact-item"
+            href="https://www.instagram.com/beautyshop.vga/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="fab fa-instagram"></i>
+            <span>beautyshop.vga</span>
+          </a>
+
+          <a
+            class="contact-item"
+            href="https://api.whatsapp.com/message/XYNFOWQ2GERBK1?autoload=1&app_absent=0"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="fab fa-whatsapp"></i>
+            <span>(35) 98469-3046</span>
+          </a>
+
+          <a class="contact-item" href="mailto:marinavanoniap@gmail.com">
+            <i class="fas fa-envelope"></i>
+            <span>marinavanoniap@gmail.com</span>
+          </a>
+        </div>
+
+        <h2>NOSSA LOCALIZAÇÃO</h2>
+        <div class="contact-location">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>Rua Delfim Moreira 412, Varginha, Brasil CEP - 37070-002</span>
+        </div>
       </div>
 
-      <div class="arrow right">
-        <i class="fas fa-arrow-right"></i>
+      <div class="contact-column contact-form-box">
+        <h2>NOS ENVIE UMA MENSAGEM</h2>
+
+        <form class="contact-form">
+          <label for="nome">Seu nome</label>
+          <input
+            id="nome"
+            type="text"
+            placeholder="ex.: Mariana Vannoni"
+            required
+          />
+
+          <label for="email">E-mail</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="ex.: seuemail@email.com.br"
+            required
+          />
+
+          <label for="telefone">Telefone</label>
+          <input
+            id="telefone"
+            type="tel"
+            inputmode="numeric"
+            pattern="[0-9]+"
+            placeholder="ex.: 35999778866"
+            required
+          />
+
+          <label for="mensagem">Sua mensagem</label>
+          <textarea
+            id="mensagem"
+            placeholder="ex.: Sua mensagem"
+            required
+          ></textarea>
+
+          <button type="submit">ENVIAR MENSAGEM</button>
+        </form>
       </div>
     </section>
-
-    <div class="dots">
-      <span></span>
-      <span class="active"></span>
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
 
     <footer class="footer">
       <div class="footer-content">
