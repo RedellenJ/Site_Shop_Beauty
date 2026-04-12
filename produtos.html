@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
@@ -25,18 +25,18 @@
 
         <div class="search">
           <input type="text" placeholder="O que você está buscando?" />
-          <button><i class="fas fa-search"></i></button>
+          <button type="button" aria-label="Buscar"><i class="fas fa-search"></i></button>
         </div>
       </div>
 
       <div class="actions">
-        <a class="action-link" href="login.html">
+        <div class="action-link action-account">
           <i class="fas fa-user"></i>
-          <span
-            >Faça login ou <br />
-            cadastre-se</span
-          >
-        </a>
+          <span>
+            <a href="login.html">Faça login</a> ou <br />
+            <a href="cadastro.html">cadastre-se</a>
+          </span>
+        </div>
 
         <a class="action-link" href="carrinho.html">
           <i class="fas fa-shopping-bag"></i>
@@ -55,14 +55,14 @@
           <a href="produtos.html">PRODUTOS</a>
           <div class="products-dropdown" aria-label="Categorias de produtos">
             <a href="produtos.html?categoria=extensao-cilios"
-              >EXTENSÃO DE CÍLIOS</a
+              >Extensão de cílios</a
             >
-            <a href="produtos.html?categoria=perfumes">PERFUMES</a>
-            <a href="produtos.html?categoria=sobrancelha">SOBRANCELHA</a>
-            <a href="produtos.html?categoria=maquiagens">MAQUIAGENS</a>
-            <a href="produtos.html?categoria=hidratantes">HIDRATANTES</a>
-            <a href="produtos.html?categoria=cabelos">CABELOS</a>
-            <a href="produtos.html?categoria=skincare">SKINCARE</a>
+            <a href="produtos.html?categoria=perfumes">Perfumes</a>
+            <a href="produtos.html?categoria=sobrancelha">Sobrancelha</a>
+            <a href="produtos.html?categoria=maquiagens">Maquiagens</a>
+            <a href="produtos.html?categoria=hidratantes">Hidratantes</a>
+            <a href="produtos.html?categoria=cabelos">Cabelos</a>
+            <a href="produtos.html?categoria=skincare">Skincare</a>
           </div>
         </li>
         <li><a href="contato.html">CONTATO</a></li>
@@ -78,5 +78,7 @@
       <h1 class="page-title">Produtos</h1>
       <p class="page-text">Em Construção</p>
     </main>
+
+    <script src="script.js"></script>
   </body>
 </html>

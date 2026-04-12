@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shop Beauty | Login</title>
+    <title>Shop Beauty | Cadastro</title>
 
     <link rel="icon" type="image/png" href="Img/Logos/Logo3.png" />
     <link rel="stylesheet" href="style.css" />
@@ -12,7 +12,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
   </head>
-  <body class="login-page">
+  <body class="login-page register-page">
     <div class="top-bar"></div>
 
     <header class="header">
@@ -78,22 +78,32 @@
       <span>Você está em:</span>
       <a class="breadcrumb-home" href="index.html">INÍCIO</a>
       <span class="separator">&gt;</span>
-      <span class="breadcrumb-current">LOGIN</span>
+      <span class="breadcrumb-current">CADASTRE-SE</span>
     </div>
 
-    <main class="login-main">
-      <section class="login-hero">
-        <div class="login-column login-form-box">
-          <h1>INICIAR SESSÃO</h1>
+    <main class="register-main">
+      <section class="register-hero">
+        <div class="register-form-box">
+          <h1>CRIE UMA CONTA</h1>
 
           <form
-            id="login-form"
-            class="login-form"
-            data-login-endpoint="http://localhost:3000/auth/login"
+            id="register-form"
+            class="register-form"
+            data-register-endpoint="http://localhost:3000/auth/register"
           >
-            <label for="login-email">E-mail</label>
+            <label for="register-name">Nome Completo</label>
             <input
-              id="login-email"
+              id="register-name"
+              name="name"
+              type="text"
+              placeholder="ex.: Mariana Vannoni"
+              autocomplete="name"
+              required
+            />
+
+            <label for="register-email">E-mail</label>
+            <input
+              id="register-email"
               name="email"
               type="email"
               placeholder="ex.: email@gmail.com.br"
@@ -101,21 +111,34 @@
               required
             />
 
-            <label for="login-password">Senha</label>
+            <label for="register-phone">Telefone</label>
+            <input
+              id="register-phone"
+              name="phone"
+              type="tel"
+              inputmode="numeric"
+              pattern="[0-9]{11}"
+              minlength="11"
+              maxlength="11"
+              placeholder="ex.: (35) 99977-8866"
+              autocomplete="tel"
+              required
+            />
+
+            <label for="register-password">Senha</label>
             <div class="password-field">
               <input
-                id="login-password"
+                id="register-password"
                 name="password"
                 type="password"
                 placeholder="ex.: suasenha"
-                autocomplete="current-password"
+                autocomplete="new-password"
                 minlength="6"
                 required
               />
               <button
-                id="toggle-password"
                 class="password-toggle"
-                data-target="login-password"
+                data-target="register-password"
                 type="button"
                 aria-label="Mostrar ou ocultar senha"
                 title="Mostrar ou ocultar senha"
@@ -124,26 +147,90 @@
               </button>
             </div>
 
-            <span class="forgot-password">Esqueceu sua senha?</span>
+            <label for="register-password-confirm">Confirme sua senha</label>
+            <div class="password-field">
+              <input
+                id="register-password-confirm"
+                name="passwordConfirm"
+                type="password"
+                autocomplete="new-password"
+                minlength="6"
+                required
+              />
+              <button
+                class="password-toggle"
+                data-target="register-password-confirm"
+                type="button"
+                aria-label="Mostrar ou ocultar confirmação de senha"
+                title="Mostrar ou ocultar confirmação de senha"
+              >
+                <i class="fas fa-eye-slash" aria-hidden="true"></i>
+              </button>
+            </div>
 
-            <button class="login-submit" type="submit">INICIAR SESSÃO</button>
+            <button class="register-submit" type="submit">CRIAR CONTA</button>
 
-            <p class="register-text">
-              Não possui uma conta ainda?
-              <a href="cadastro.html">Crie sua conta</a>
+            <p class="register-login-text">
+              Já possui uma conta?
+              <a href="login.html">Faça login</a>
             </p>
 
             <p
-              id="login-feedback"
+              id="register-feedback"
               class="login-feedback"
               aria-live="polite"
             ></p>
           </form>
         </div>
 
-        <div class="login-column login-brand-box">
+        <aside class="register-aside">
           <img src="Img/Logos/Logo1.png" alt="Shop Beauty" />
-        </div>
+
+          <h2>NOSSAS REDES SOCIAIS!</h2>
+          <div class="register-social-row">
+            <a
+              href="https://www.instagram.com/beautyshop.vga/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+            >
+              <i class="fab fa-instagram"></i>
+              <span>beautyshop.vga</span>
+            </a>
+            <a
+              href="https://api.whatsapp.com/message/XYNFOWQ2GERBK1?autoload=1&app_absent=0"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WhatsApp"
+            >
+              <i class="fab fa-whatsapp"></i>
+              <span>(35) 98469-3046</span>
+            </a>
+            <a
+              href="https://www.tiktok.com/@beautyshop.vga"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="TikTok"
+            >
+              <i class="fab fa-tiktok"></i>
+              <span>beautyshop.vga</span>
+            </a>
+          </div>
+
+          <h2>NOSSA LOCALIZAÇÃO!</h2>
+          <a
+            class="register-location"
+            href="https://google.com/maps/place/R.+Delfim+Moreira,+412+-+Centro,+Varginha+-+MG,+37002-070/@-21.5551854,-45.435981,3a,60y,320.59h,89.44t/data=!3m7!1e1!3m5!1sm4YAcNvcOByxPi1LIxjRXQ!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D0.5639618838037563%26panoid%3Dm4YAcNvcOByxPi1LIxjRXQ%26yaw%3D320.59014430197186!7i16384!8i8192!4m6!3m5!1s0x94ca928eaf2493d9:0x8b5464e43ae492c1!8m2!3d-21.5551146!4d-45.4360299!16s%2Fg%2F11q2wlk085?entry=ttu&amp;g_ep=EgoyMDI2MDQwOC4wIKXMDSoASAFQAw%3D%3D"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Abrir localização da loja no Google Maps"
+          >
+            <i class="fas fa-map-marker-alt"></i>
+            <span
+              >Rua Delfim Moreira 412, Varginha, Brasil CEP - 37070-002</span
+            >
+          </a>
+        </aside>
       </section>
     </main>
 
