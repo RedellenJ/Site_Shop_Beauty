@@ -105,11 +105,12 @@ app.post('/pedidos', verificaLogin, async (req, res) => {
       if (erroPedido) return res.status(500).json({ erro: "Erro ao criar pedido." })
 
     let valorTotalGeral = 0;
-    
+    let itensFormatados = '';
+
     for (const item of itens){
       const { data: produto, error: erroProduto } = await supabase
         .from('produtos')
-        .select('preco')
+        .select('preco, nome')
         .eq('id', item.produto_id)
 
         if (erroProduto) return res.status(500).json({ erro: "Erro ao buscar produto." })
@@ -126,8 +127,10 @@ app.post('/pedidos', verificaLogin, async (req, res) => {
                })
 
         if (erroInserir) return res.status(500).json({ erro: "Erro ao inserir o item no pedido." })
-
+        
         valorTotalGeral += (valor_unitario * item.quantidade);
+
+        itensFormatados += `. ${produto[0].nome.substring(0, 25)} x${item.quantidade} = R$ ${(valor_unitario * item.quantidade).toFixed(2)}\n`
     }
 
     const { data: pedidoAtualizado, error: erroAtualizar } = await supabase
@@ -136,8 +139,16 @@ app.post('/pedidos', verificaLogin, async (req, res) => {
       .eq('id', pedido[0].id)
 
       if (erroAtualizar) return res.status(500).json({ erro: "Erro ao atualizar o valor total do pedido." })
+                      
+    const mensagemFormatada = `Pedido N° ${pedido[0].id}\n
+Cliente: ${data[0].nome}\n
+${itensFormatados}
+Total: R$${valorTotalGeral.toFixed(2)}\n
+Obs: ${observacao}`
 
-  res.status(201).json({ mensagem: "Pedido realizado com sucesso!" }) 
+    const link = `https://wa.me/5535984693046?text=${encodeURIComponent(mensagemFormatada)}`
+
+  res.status(201).json({ mensagem: "Pedido realizado com sucesso!", link}) 
 })
 
 app.listen(PORT, () => {
