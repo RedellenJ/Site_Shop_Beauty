@@ -202,7 +202,6 @@ if (loginForm) {
       "http://localhost:3000/auth/login";
 
     try {
-      // Front-end pronto para integrar: ajuste o endpoint para sua rota real.
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
@@ -225,9 +224,6 @@ if (loginForm) {
         loginFeedback.className = "login-feedback success";
       }
 
-      // Exemplo para próxima etapa: salvar token e redirecionar.
-      // localStorage.setItem("authToken", payload.token);
-      // window.location.href = "index.html";
     } catch (error) {
       if (loginFeedback) {
         loginFeedback.textContent =
@@ -317,7 +313,6 @@ if (registerForm) {
       "http://localhost:3000/auth/register";
 
     try {
-      // Front-end pronto para integrar: ajuste o endpoint para sua rota real.
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
@@ -345,8 +340,6 @@ if (registerForm) {
         registerFeedback.className = "login-feedback success";
       }
 
-      // Exemplo para próxima etapa: redirecionar para login.
-      // window.location.href = "login.html";
     } catch (error) {
       if (registerFeedback) {
         registerFeedback.textContent =
