@@ -143,7 +143,7 @@ app.post('/pedidos', verificaLogin, async (req, res) => {
     const mensagemFormatada = `Pedido N° ${pedido[0].id}\n
 Cliente: ${data[0].nome}\n
 ${itensFormatados}
-Total: R$${valorTotalGeral.toFixed(2)}\n
+Total: R$ ${valorTotalGeral.toFixed(2)}\n
 Obs: ${observacao}`
 
     const link = `https://wa.me/5535984693046?text=${encodeURIComponent(mensagemFormatada)}`
