@@ -202,7 +202,6 @@ if (loginForm) {
       "http://localhost:3000/auth/login";
 
     try {
-      // Front-end pronto para integrar: ajuste o endpoint para sua rota real.
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
@@ -225,9 +224,6 @@ if (loginForm) {
         loginFeedback.className = "login-feedback success";
       }
 
-      // Exemplo para próxima etapa: salvar token e redirecionar.
-      // localStorage.setItem("authToken", payload.token);
-      // window.location.href = "index.html";
     } catch (error) {
       if (loginFeedback) {
         loginFeedback.textContent =
@@ -317,7 +313,6 @@ if (registerForm) {
       "http://localhost:3000/auth/register";
 
     try {
-      // Front-end pronto para integrar: ajuste o endpoint para sua rota real.
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
@@ -345,8 +340,6 @@ if (registerForm) {
         registerFeedback.className = "login-feedback success";
       }
 
-      // Exemplo para próxima etapa: redirecionar para login.
-      // window.location.href = "login.html";
     } catch (error) {
       if (registerFeedback) {
         registerFeedback.textContent =
@@ -362,3 +355,39 @@ if (registerForm) {
     }
   });
 }
+
+async function carregarProdutos() {
+    try {
+        const resposta = await fetch('http://localhost:3000/filtroProduto');
+        const produtos = await resposta.json();
+        
+        const container = document.querySelector('.page-content');
+        container.innerHTML = '<h1 class="page-title">Produtos</h1><div class="produtos-grid" style="display: flex; flex-wrap: wrap; gap: 20px;"></div>';
+        
+        const grid = document.querySelector('.produtos-grid');
+        
+        produtos.forEach(produto => {
+            const card = document.createElement('div');
+            card.style.border = "1px solid #ccc";
+            card.style.padding = "15px";
+            card.style.width = "250px";
+            card.style.textAlign = "center";
+            
+            const imagem = produto.imagem_url ? produto.imagem_url : 'https://via.placeholder.com/150?text=Sem+Imagem';
+            
+            card.innerHTML = `
+                <img src="${imagem}" alt="${produto.nome}" style="width: 100%; height: auto; max-width: 150px;">
+                <h3 style="font-size: 16px; margin: 10px 0;">${produto.nome}</h3>
+                <p style="color: #666; font-size: 14px;">${produto.marca}</p>
+                <p style="font-weight: bold; font-size: 18px;">R$ ${produto.preco}</p>
+            `;
+            
+            grid.appendChild(card);
+        });
+        
+    } catch (erro) {
+        console.error(erro);
+    }
+}
+
+carregarProdutos();
