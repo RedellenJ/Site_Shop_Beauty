@@ -390,4 +390,55 @@ async function carregarProdutos() {
     }
 }
 
+async function carregarProdutos() {
+    try {
+        const resposta = await fetch('http://localhost:3000/filtroProduto');
+        const produtos = await resposta.json();
+        
+        const container = document.querySelector('.page-content');
+        container.innerHTML = '<h1 class="page-title">Produtos</h1><div class="produtos-grid" style="display: flex; flex-wrap: wrap; gap: 20px;"></div>';
+        
+        const grid = document.querySelector('.produtos-grid');
+        
+        produtos.forEach(produto => {
+            const card = document.createElement('div');
+            card.style.border = "1px solid #ccc";
+            card.style.padding = "15px";
+            card.style.width = "250px";
+            card.style.textAlign = "center";
+            card.style.display = "flex";
+            card.style.flexDirection = "column";
+            card.style.justifyContent = "between";
+            
+            const imagem = produto.imagem_url ? produto.imagem_url : 'https://via.placeholder.com/150?text=Sem+Imagem';
+            
+            card.innerHTML = `
+                <img src="${imagem}" alt="${produto.nome}" style="width: 100%; height: auto; max-width: 150px; margin: 0 auto;">
+                <h3 style="font-size: 16px; margin: 10px 0;">${produto.nome}</h3>
+                <p style="color: #666; font-size: 14px;">${produto.marca}</p>
+                <p style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">R$ ${produto.preco}</p>
+                <button class="btn-adicionar" style="background-color: #000; color: #fff; border: none; padding: 10px; cursor: pointer; font-weight: bold; margin-top: auto;">Adicionar à Sacola</button>
+            `;
+            
+            const botao = card.querySelector('.btn-adicionar');
+            botao.addEventListener('click', () => adicionarAoSacola(produto));
+            
+            grid.appendChild(card);
+        });
+        
+    } catch (erro) {
+        console.error(erro);
+    }
+}
+
+function adicionarAoSacola(produto) {
+    let sacola = JSON.parse(localStorage.getItem('sacola')) || [];
+    
+    sacola.push(produto);
+    
+    localStorage.setItem('sacola', JSON.stringify(sacola));
+    
+    alert(`${produto.nome} foi adicionado à sua sacola!`);
+}
+
 carregarProdutos();
