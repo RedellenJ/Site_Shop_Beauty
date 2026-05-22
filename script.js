@@ -362,6 +362,10 @@ async function carregarProdutos() {
         const produtos = await resposta.json();
         
         const container = document.querySelector('.page-content');
+        if (!container) {
+            return;
+        }
+
         container.innerHTML = '<h1 class="page-title">Produtos</h1><div class="produtos-grid" style="display: flex; flex-wrap: wrap; gap: 20px;"></div>';
         
         const grid = document.querySelector('.produtos-grid');
@@ -390,4 +394,7 @@ async function carregarProdutos() {
     }
 }
 
-carregarProdutos();
+const isProductPage = window.location.pathname.toLowerCase().endsWith('produtos.html');
+if (isProductPage) {
+    carregarProdutos();
+}
