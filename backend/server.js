@@ -20,6 +20,7 @@ app.get('/produtos', async (req, res) => {
   const { data, error } = await supabase
     .from('produtos')
     .select('*')
+    //.not('imagem_url', 'is', null)
 
     if (error) return res.status(500).json({ erro: "Erro ao buscar produtos! Tente novamente." })
   res.json(data)
@@ -30,7 +31,7 @@ app.get('/filtroProduto', async (req, res) => {
 
   let query = supabase
     .from('produtos')
-    .select('nome, preco, descricao, imagem_url, categoria, marca')
+    .select('id, nome, preco, descricao, imagem_url, categoria, marca')
 
     if (marca) query = query.eq('marca', marca)
     if (preco) query = query.eq('preco', preco)
@@ -70,6 +71,7 @@ app.post('/loginClientes', async (req, res) => {
         if (email) query = query.eq('email', email)
 
     const { data, error } = await query
+    if (error) return res.status(500).json({erro: "Erro ao realizar o login." })
 
       if (data.length === 0) return res.status(404).json({ erro: "Usuário não encontrado! Faça seu cadastro ou tente novamente." })
 
@@ -148,7 +150,7 @@ ${itensFormatados}
 Total: R$ ${valorTotalGeral.toFixed(2)}\n
 Obs: ${observacao}`
 
-    const link = `https://wa.me/5535984693046?text=${encodeURIComponent(mensagemFormatada)}`
+    const link = `https://wa.me/553584693046?text=${encodeURIComponent(mensagemFormatada)}`
 
   res.status(201).json({ mensagem: "Pedido realizado com sucesso!", link}) 
 })
