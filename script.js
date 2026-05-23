@@ -178,9 +178,9 @@ if (loginForm) {
     const submitButton = loginForm.querySelector(".login-submit");
 
     const email = emailField ? emailField.value.trim() : "";
-    const password = passwordField ? passwordField.value : "";
+    const senha = passwordField ? passwordField.value : "";
 
-    if (!email || !password) {
+    if (!email || !senha) {
       if (loginFeedback) {
         loginFeedback.textContent = "Preencha e-mail e senha para continuar.";
         loginFeedback.className = "login-feedback error";
@@ -199,7 +199,7 @@ if (loginForm) {
 
     const endpoint =
       loginForm.getAttribute("data-login-endpoint") ||
-      "http://localhost:3000/auth/login";
+      "http://localhost:3000/loginClientes";
 
     try {
       const response = await fetch(endpoint, {
@@ -207,7 +207,7 @@ if (loginForm) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, senha }),
       });
 
       const payload = await response.json().catch(() => ({}));
@@ -224,12 +224,14 @@ if (loginForm) {
         loginFeedback.className = "login-feedback success";
       }
 
+      localStorage.setItem('token', payload.token)
+
     } catch (error) {
       if (loginFeedback) {
         loginFeedback.textContent =
           error instanceof Error
             ? error.message
-            : "Nao foi possivel concluir o login agora.";
+            : "Não foi possível concluir o login agora.";
         loginFeedback.className = "login-feedback error";
       }
     } finally {
@@ -253,17 +255,17 @@ if (registerForm) {
     );
     const submitButton = registerForm.querySelector(".register-submit");
 
-    const name = nameField ? nameField.value.trim() : "";
+    const nome = nameField ? nameField.value.trim() : "";
     const email = emailField ? emailField.value.trim() : "";
-    const phone = phoneFieldRegister
+    const telefone = phoneFieldRegister
       ? sanitizePhoneDigits(phoneFieldRegister.value)
       : "";
-    const password = passwordField ? passwordField.value : "";
-    const passwordConfirm = confirmPasswordField
+    const senha = passwordField ? passwordField.value : "";
+    const confirmaSenha = confirmPasswordField
       ? confirmPasswordField.value
       : "";
 
-    if (!name || !email || !phone || !password || !passwordConfirm) {
+    if (!nome || !email || !telefone || !senha || !confirmaSenha) {
       if (registerFeedback) {
         registerFeedback.textContent =
           "Preencha todos os campos para continuar.";
@@ -272,7 +274,7 @@ if (registerForm) {
       return;
     }
 
-    if (!isValidPhoneDigits(phone)) {
+    if (!isValidPhoneDigits(telefone)) {
       if (registerPhoneField) {
         registerPhoneField.setCustomValidity(
           "Informe um telefone com 11 dígitos.",
@@ -291,7 +293,7 @@ if (registerForm) {
       registerPhoneField.setCustomValidity("");
     }
 
-    if (password !== passwordConfirm) {
+    if (senha !== confirmaSenha) {
       if (registerFeedback) {
         registerFeedback.textContent = "As senhas precisam ser iguais.";
         registerFeedback.className = "login-feedback error";
@@ -310,7 +312,7 @@ if (registerForm) {
 
     const endpoint =
       registerForm.getAttribute("data-register-endpoint") ||
-      "http://localhost:3000/auth/register";
+      "http://localhost:3000/cadastroClientes";
 
     try {
       const response = await fetch(endpoint, {
@@ -319,10 +321,10 @@ if (registerForm) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name,
+          nome,
           email,
-          phone,
-          password,
+          telefone,
+          senha,
         }),
       });
 
@@ -345,7 +347,7 @@ if (registerForm) {
         registerFeedback.textContent =
           error instanceof Error
             ? error.message
-            : "Nao foi possivel concluir o cadastro agora.";
+            : "Não foi possível concluir o cadastro agora.";
         registerFeedback.className = "login-feedback error";
       }
     } finally {
@@ -356,9 +358,12 @@ if (registerForm) {
   });
 }
 
+// CONEXÕES COM O BACKEND!
+
 async function carregarProdutos() {
+    
     try {
-        const resposta = await fetch('http://localhost:3000/filtroProduto');
+        const resposta = await fetch('http://localhost:3000/produtos');
         const produtos = await resposta.json();
         
         const container = document.querySelector('.page-content');
@@ -376,15 +381,21 @@ async function carregarProdutos() {
             card.style.padding = "15px";
             card.style.width = "250px";
             card.style.textAlign = "center";
+            card.style.display = "flex";
+            card.style.flexDirection = "column";
+            card.style.justifyContent = "between";
             
             const imagem = produto.imagem_url ? produto.imagem_url : 'https://via.placeholder.com/150?text=Sem+Imagem';
             
-            card.innerHTML = `
-                <img src="${imagem}" alt="${produto.nome}" style="width: 100%; height: auto; max-width: 150px;">
+            card.innerHTML = 
+                `<img src="${imagem}" alt="${produto.nome}" style="width: 100%; height: auto; max-width: 150px; margin: 0 auto;">
                 <h3 style="font-size: 16px; margin: 10px 0;">${produto.nome}</h3>
                 <p style="color: #666; font-size: 14px;">${produto.marca}</p>
-                <p style="font-weight: bold; font-size: 18px;">R$ ${produto.preco}</p>
-            `;
+                <p style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">R$ ${parseFloat(produto.preco).toFixed(2)}</p>
+                <button class="btn-adicionar" style="background-color: #000; color: #fff; border: none; padding: 10px; cursor: pointer; font-weight: bold; margin-top: auto;">Adicionar à Sacola</button>`;
+            
+            const botao = card.querySelector('.btn-adicionar');
+            botao.addEventListener('click', () => adicionarAoSacola(produto));
             
             grid.appendChild(card);
         });
@@ -394,7 +405,165 @@ async function carregarProdutos() {
     }
 }
 
+function adicionarAoSacola(produto) {
+    
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        alert('Você precisa estar logado para adicionar produtos à sacola.');
+        window.location.href = 'login.html';
+        return;
+    }
+  
+    let sacola = JSON.parse(localStorage.getItem('sacola')) || [];
+    
+    const index = sacola.findIndex(item => item.id === produto.id)
+    
+    if (index >= 0) {
+      sacola[index].quantidade += 1
+      alert(`Quantidade de ${produto.nome} foi atualizada para ${sacola[index].quantidade}!`)
+    } else {
+      sacola.push({ ...produto, quantidade: 1 })
+      alert(`${produto.nome} foi adicionado à sua sacola!`)
+    }
+    
+    localStorage.setItem('sacola', JSON.stringify(sacola));
+}    
+
+function exibirSacola() {
+    
+    const token = localStorage.getItem('token');
+    const sacola = JSON.parse(localStorage.getItem('sacola')) || [];
+    const container = document.querySelector('.page-content');
+
+    if (!token) {
+        container.innerHTML = 
+            `<h1 class="page-title">Sua Sacola</h1>
+            <p style="text-align: center; margin-top: 20px;">
+                Você precisa estar logado para ver sua sacola.
+            </p>`;
+        return;
+    }
+
+    if (sacola.length === 0) {
+        container.innerHTML = 
+            `<h1 class="page-title">Sua Sacola</h1>
+            <p style="text-align: center; margin-top: 20px;">Sua sacola está vazia. Volte para a página de produtos!</p>`;
+        return;
+    }
+
+    container.innerHTML = 
+        `<h1 class="page-title">Sua Sacola</h1>
+        <div class="sacola-wrapper" style="display: flex; flex-direction: column; gap: 20px; max-width: 600px; margin: 0 auto;">
+            <div class="itens-sacola"></div>
+            <div class="resumo-sacola" style="border-top: 2px solid #000; padding-top: 15px; text-align: right;">
+                <h3 id="total-sacola" style="font-size: 20px; font-weight: bold;">Total: R$ 0.00</h3>
+                <button id="btn-limpar" style="background-color: #ff4d4d; color: #fff; border: none; padding: 10px; cursor: pointer; margin-right: 10px;">Limpar Sacola</button>
+                <button id="btn-finalizar" style="background-color: #000; color: #fff; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold;">Finalizar Compra</button>
+            </div>
+        </div>`;
+
+    const listaItens = container.querySelector('.itens-sacola');
+    let valorTotal = 0;
+
+    sacola.forEach((produto, index) => {
+        const itemRow = document.createElement('div');
+        itemRow.style.display = 'flex';
+        itemRow.style.alignItems = 'center';
+        itemRow.style.justifyContent = 'space-between';
+        itemRow.style.borderBottom = '1px solid #eee';
+        itemRow.style.padding = '10px 0';
+
+        const imagem = produto.imagem_url ? produto.imagem_url : 'https://via.placeholder.com/50?text=Sem+Imagem';
+        
+        itemRow.innerHTML = 
+            `<img src="${imagem}" alt="${produto.nome}" style="width: 50px; height: auto;">
+            <div style="flex-grow: 1; margin-left: 15px; text-align: left;">
+                <h4 style="margin: 0; font-size: 16px;">${produto.nome}</h4>
+                <p style="margin: 0; color: #666; font-size: 12px;">${produto.marca}</p>
+            </div>
+            <p style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">R$ ${parseFloat(produto.preco).toFixed(2)}</p>
+            <button class="btn-remover" data-index="${index}" style="background: none; border: none; color: red; cursor: pointer; font-weight: bold;">X</button>`;
+
+        listaItens.appendChild(itemRow);
+        
+        valorTotal += parseFloat(produto.preco) * produto.quantidade;
+    });
+
+    container.querySelector('#total-sacola').innerText = `Total: R$ ${valorTotal.toFixed(2)}`;
+
+    container.querySelector('#btn-limpar').addEventListener('click', () => {
+        localStorage.removeItem('sacola');
+        exibirSacola();
+    });
+
+    container.querySelector('#btn-finalizar').addEventListener('click', finalizarCompra);
+
+    const botoesRemover = container.querySelectorAll('.btn-remover');
+    botoesRemover.forEach(botao => {
+        botao.addEventListener('click', (e) => {
+            const indexRemover = e.target.getAttribute('data-index');
+            sacola.splice(indexRemover, 1);
+            localStorage.setItem('sacola', JSON.stringify(sacola));
+            exibirSacola();
+        });
+    });
+}
+
+async function finalizarCompra() {
+    
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        alert('Você precisa estar logado para finalizar a compra.');
+        return;
+    }
+
+    const sacola = JSON.parse(localStorage.getItem('sacola')) || [];
+
+    if (sacola.length === 0) {
+        alert('Sua sacola está vazia.');
+        return;
+    }
+
+    const itens = sacola.map(item => ({
+        produto_id: item.id,
+        quantidade: item.quantidade
+    }));
+
+    try {
+        const resposta = await fetch('http://localhost:3000/pedidos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ itens, observacao: null })
+        });
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+            alert(dados.erro || 'Erro ao finalizar o pedido. Tente novamente.');
+            return;
+        }
+
+        localStorage.removeItem('sacola');
+        window.location.href = dados.link;
+
+    } catch (erro) {
+        alert('Não foi possível conectar ao servidor. Tente novamente.');
+    }
+}
+
 const isProductPage = window.location.pathname.toLowerCase().endsWith('produtos.html');
-if (isProductPage) {
-    carregarProdutos();
+
+    if (isProductPage) {
+      carregarProdutos();
+}
+
+const isSacolaPage = window.location.pathname.toLowerCase().endsWith('sacola.html');
+
+    if (isSacolaPage) {
+      exibirSacola();
 }
