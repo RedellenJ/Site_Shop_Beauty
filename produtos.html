@@ -24,8 +24,8 @@
         </div>
 
         <div class="search">
-          <input type="text" placeholder="O que você está buscando?" />
-          <button type="button" aria-label="Buscar"><i class="fas fa-search"></i></button>
+          <input id="productSearch" type="text" placeholder="O que você está buscando?" />
+          <button onclick="carregarProdutosPorNome(document.getElementById('productSearch').value)" type="button" aria-label="Buscar"><i class="fas fa-search"></i></button>
         </div>
       </div>
 
