@@ -43,6 +43,19 @@ app.get('/filtroProduto', async (req, res) => {
   res.json(data)
 })
 
+app.get('/filtroProdutoNome', async (req, res) => {
+  const { nome } = req.query
+  let query = supabase
+    .from('produtos')
+    .select('id, nome, preco, descricao, imagem_url, categoria, marca')
+    .ilike('nome', `%${nome}%`) 
+
+  const { data, error } = await query
+
+    if (error) return res.status(500).json({erro: "Erro ao filtrar produtos! Tente novamente." })
+  res.json(data)
+})
+
 app.post('/cadastroClientes', async (req, res) => {
     const { nome, email, telefone, senha } = req.body;
 
