@@ -427,85 +427,95 @@ function adicionarAoSacola(produto) {
 }    
 
 function exibirSacola() {
+  const token = localStorage.getItem("token");
+  const sacola = JSON.parse(localStorage.getItem("sacola")) || [];
+
+  const cartGrid = document.getElementById("cart-grid");
+  const summaryItems = document.getElementById("summary-items");
+  const totalValueEl = document.getElementById("total-value");
+  const container = document.querySelector(".cart-container");
+
+  if (!container || !cartGrid || !summaryItems || !totalValueEl) {
+    return;
+  }
+
+  if (!token) {
+    container.innerHTML = `
+      <div style="text-align: center; width: 100%; padding: 50px;">
+        <h2>Sua Sacola</h2>
+        <p>Você precisa estar logado para ver sua sacola.</p>
+        <a href="login.html" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background: #000; color: #fff; text-decoration: none;">Fazer Login</a>
+      </div>
+    `;
+    return;
+  }
+
+  if (sacola.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; width: 100%; padding: 50px;">
+        <h2>Sua Sacola</h2>
+        <p>Sua sacola está vazia. Volte para a página de produtos!</p>
+        <a href="produtos.html" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background: #000; color: #fff; text-decoration: none;">Ver Produtos</a>
+      </div>
+    `;
+    return;
+  }
+
+  cartGrid.innerHTML = "";
+  summaryItems.innerHTML = "";
+  let valorTotal = 0;
+
+  sacola.forEach((produto, index) => {
+    const imagem = produto.imagem_url ? produto.imagem_url : "https://via.placeholder.com/80?text=Sem+Imagem";
+    const preco = parseFloat(produto.preco);
+    const subtotal = preco * produto.quantidade;
     
-    const token = localStorage.getItem('token');
-    const sacola = JSON.parse(localStorage.getItem('sacola')) || [];
-    const container = document.querySelector('.page-content');
+    const article = document.createElement("article");
+    article.className = "cart-item";
+    article.innerHTML = `
+      <img src="${imagem}" alt="${produto.nome}" class="cart-item-image">
+      <div class="cart-item-details">
+        <h3 class="cart-item-title">${produto.nome} ${produto.quantidade > 1 ? `(x${produto.quantidade})` : ''}</h3>
+        <span class="cart-item-label">VALOR:</span>
+        <span class="cart-item-price">R$ ${preco.toFixed(2).replace('.', ',')}</span>
+      </div>
+      <button class="btn-remover" data-index="${index}" style="background: none; border: none; color: red; cursor: pointer; font-weight: bold; font-size: 1.2rem; padding: 0 10px;">X</button>
+    `;
+    cartGrid.appendChild(article);
 
-    if (!token) {
-        container.innerHTML = 
-            `<h1 class="page-title">Sua Sacola</h1>
-            <p style="text-align: center; margin-top: 20px;">
-                Você precisa estar logado para ver sua sacola.
-            </p>`;
-        return;
-    }
+    const summaryRow = document.createElement("div");
+    summaryRow.className = "summary-row";
+    summaryRow.innerHTML = `
+      <span class="summary-name">${produto.nome} ${produto.quantidade > 1 ? `(x${produto.quantidade})` : ''}</span>
+      <span class="summary-price">R$ ${subtotal.toFixed(2).replace('.', ',')}</span>
+    `;
+    summaryItems.appendChild(summaryRow);
 
-    if (sacola.length === 0) {
-        container.innerHTML = 
-            `<h1 class="page-title">Sua Sacola</h1>
-            <p style="text-align: center; margin-top: 20px;">Sua sacola está vazia. Volte para a página de produtos!</p>`;
-        return;
-    }
+    valorTotal += subtotal;
+  });
 
-    container.innerHTML = 
-        `<h1 class="page-title">Sua Sacola</h1>
-        <div class="sacola-wrapper" style="display: flex; flex-direction: column; gap: 20px; max-width: 600px; margin: 0 auto;">
-            <div class="itens-sacola"></div>
-            <div class="resumo-sacola" style="border-top: 2px solid #000; padding-top: 15px; text-align: right;">
-                <h3 id="total-sacola" style="font-size: 20px; font-weight: bold;">Total: R$ 0.00</h3>
-                <button id="btn-limpar" style="background-color: #ff4d4d; color: #fff; border: none; padding: 10px; cursor: pointer; margin-right: 10px;">Limpar Sacola</button>
-                <button id="btn-finalizar" style="background-color: #000; color: #fff; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold;">Finalizar Compra</button>
-            </div>
-        </div>`;
+  totalValueEl.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
 
-    const listaItens = container.querySelector('.itens-sacola');
-    let valorTotal = 0;
+  let boxSummary = document.querySelector(".summary-box");
+  if (!document.getElementById("btn-finalizar-novo")) {
+     const btnFinalizar = document.createElement("button");
+     btnFinalizar.id = "btn-finalizar-novo";
+     btnFinalizar.innerText = "FINALIZAR COMPRA";
+     btnFinalizar.style.cssText = "width: 100%; background-color: #000; color: #fff; border: none; padding: 15px; cursor: pointer; font-weight: bold; margin-top: 15px; border-radius: 8px;";
+     btnFinalizar.addEventListener('click', finalizarCompra);
+     boxSummary.appendChild(btnFinalizar);
+  }
 
-    sacola.forEach((produto, index) => {
-        const itemRow = document.createElement('div');
-        itemRow.style.display = 'flex';
-        itemRow.style.alignItems = 'center';
-        itemRow.style.justifyContent = 'space-between';
-        itemRow.style.borderBottom = '1px solid #eee';
-        itemRow.style.padding = '10px 0';
-
-        const imagem = produto.imagem_url ? produto.imagem_url : 'https://via.placeholder.com/50?text=Sem+Imagem';
-        
-        itemRow.innerHTML = 
-            `<img src="${imagem}" alt="${produto.nome}" style="width: 50px; height: auto;">
-            <div style="flex-grow: 1; margin-left: 15px; text-align: left;">
-                <h4 style="margin: 0; font-size: 16px;">${produto.nome}</h4>
-                <p style="margin: 0; color: #666; font-size: 12px;">${produto.marca}</p>
-            </div>
-            <p style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">R$ ${parseFloat(produto.preco).toFixed(2)}</p>
-            <button class="btn-remover" data-index="${index}" style="background: none; border: none; color: red; cursor: pointer; font-weight: bold;">X</button>`;
-
-        listaItens.appendChild(itemRow);
-        
-        valorTotal += parseFloat(produto.preco) * produto.quantidade;
-    });
-
-    container.querySelector('#total-sacola').innerText = `Total: R$ ${valorTotal.toFixed(2)}`;
-
-    container.querySelector('#btn-limpar').addEventListener('click', () => {
-        localStorage.removeItem('sacola');
-        exibirSacola();
-    });
-
-    container.querySelector('#btn-finalizar').addEventListener('click', finalizarCompra);
-
-    const botoesRemover = container.querySelectorAll('.btn-remover');
-    botoesRemover.forEach(botao => {
-        botao.addEventListener('click', (e) => {
-            const indexRemover = e.target.getAttribute('data-index');
-            sacola.splice(indexRemover, 1);
-            localStorage.setItem('sacola', JSON.stringify(sacola));
-            exibirSacola();
-        });
-    });
+  const botoesRemover = container.querySelectorAll('.btn-remover');
+  botoesRemover.forEach(botao => {
+      botao.addEventListener('click', (e) => {
+          const indexRemover = e.target.getAttribute('data-index');
+          sacola.splice(indexRemover, 1);
+          localStorage.setItem('sacola', JSON.stringify(sacola));
+          exibirSacola();
+      });
+  });
 }
-
 async function finalizarCompra() {
     
     const token = localStorage.getItem('token');
