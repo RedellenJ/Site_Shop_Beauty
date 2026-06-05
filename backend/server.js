@@ -48,7 +48,7 @@ app.get('/filtroProdutoNome', async (req, res) => {
   let query = supabase
     .from('produtos')
     .select('id, nome, preco, descricao, imagem_url, categoria, marca')
-    .ilike('nome', `%${nome}%`) 
+    .ilike('nome', `%${nome}%`)
 
   const { data, error } = await query
 
@@ -61,18 +61,18 @@ app.post('/cadastroClientes', async (req, res) => {
 
     const saltRounds = 10;
     const hash = await bcrypt.hash(senha, saltRounds);
-    
+
     const { data, error } = await supabase
       .from('clientes')
-      .insert({nome: nome, 
+      .insert({nome: nome,
               email: email,
               telefone: telefone,
               senha: hash
              })
 
     if (error) return res.status(500).json({ erro: "Erro ao realizar cadastro! Tente novamente." })
-  
-  res.status(201).json({ mensagem: "Cadastro realizado com sucesso!" }) 
+
+  res.status(201).json({ mensagem: "Cadastro realizado com sucesso!" })
 })
 
 app.post('/loginClientes', async (req, res) => {
@@ -90,10 +90,10 @@ app.post('/loginClientes', async (req, res) => {
 
     const resultado = await bcrypt.compare(senha, data[0].senha)
       if (resultado != true) return res.status(401).json({ erro: "Senha incorreta! Tente novamente." })
-    
+
     const token = jwt.sign({email: email}, process.env.JWT_SECRET, {expiresIn: '6h'})
-    
-  res.json({ token, mensagem: "Login realizado com sucesso!" })
+
+  res.json({ token, nome: data[0].nome, email: data[0].email, mensagem: "Login realizado com sucesso!" })
 })
 
 app.post('/pedidos', verificaLogin, async (req, res) => {
@@ -110,7 +110,7 @@ app.post('/pedidos', verificaLogin, async (req, res) => {
     const cliente_id = data[0].id
 
     const { itens, observacao } = req.body;
-    
+
     const { data: pedido, error: erroPedido } = await supabase
       .from('pedidos')
       .insert({cliente_id: cliente_id,
@@ -132,11 +132,11 @@ app.post('/pedidos', verificaLogin, async (req, res) => {
 
         if (erroProduto) return res.status(500).json({ erro: "Erro ao buscar produto." })
 
-      const valor_unitario = produto[0].preco;  
+      const valor_unitario = produto[0].preco;
 
       const { data: item_inserido, error: erroInserir } = await supabase
         .from('itens_pedido')
-        .insert({pedido_id: pedido[0].id, 
+        .insert({pedido_id: pedido[0].id,
                  produto_id: item.produto_id,
                  quantidade: item.quantidade,
                  valor_unitario: valor_unitario,
@@ -144,7 +144,7 @@ app.post('/pedidos', verificaLogin, async (req, res) => {
                })
 
         if (erroInserir) return res.status(500).json({ erro: "Erro ao inserir o item no pedido." })
-        
+
         valorTotalGeral += (valor_unitario * item.quantidade);
 
         itensFormatados += `. ${produto[0].nome.substring(0, 25)} x${item.quantidade} = R$ ${(valor_unitario * item.quantidade).toFixed(2)}\n`
@@ -156,7 +156,7 @@ app.post('/pedidos', verificaLogin, async (req, res) => {
       .eq('id', pedido[0].id)
 
       if (erroAtualizar) return res.status(500).json({ erro: "Erro ao atualizar o valor total do pedido." })
-                      
+
     const mensagemFormatada = `Pedido N° ${pedido[0].id}\n
 Cliente: ${data[0].nome}\n
 ${itensFormatados}
@@ -165,7 +165,7 @@ Obs: ${observacao}`
 
     const link = `https://wa.me/553584693046?text=${encodeURIComponent(mensagemFormatada)}`
 
-  res.status(201).json({ mensagem: "Pedido realizado com sucesso!", link}) 
+  res.status(201).json({ mensagem: "Pedido realizado com sucesso!", link})
 })
 
 app.listen(PORT, () => {
