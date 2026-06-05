@@ -45,6 +45,7 @@ app.get('/filtroProduto', async (req, res) => {
 
 app.get('/filtroProdutoNome', async (req, res) => {
   const { nome } = req.query
+  
   let query = supabase
     .from('produtos')
     .select('id, nome, preco, descricao, imagem_url, categoria, marca')
@@ -52,7 +53,7 @@ app.get('/filtroProdutoNome', async (req, res) => {
 
   const { data, error } = await query
 
-    if (error) return res.status(500).json({erro: "Erro ao filtrar produtos! Tente novamente." })
+    if (error) return res.status(500).json({erro: "Erro ao encontrar o produto! Tente novamente." })
   res.json(data)
 })
 
