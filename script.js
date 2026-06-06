@@ -221,6 +221,7 @@ function atualizarAreaConta() {
   logoutButton.onclick = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userName");
+    localStorage.removeItem("sacola");
     atualizarAreaConta();
     window.location.href = "index.html";
   };
