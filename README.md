@@ -30,7 +30,7 @@ O projeto foi desenvolvido para oferecer uma experiência completa de e-commerce
 ## Prints do sistema
 
 Home
-<img width="1904" height="1079" alt="image" src="https://github.com/user-attachments/assets/ddafda43-24ba-4234-9f5b-4b7c916ef13d" />
+<img width="1911" height="934" alt="home1" src="https://github.com/user-attachments/assets/77355baf-3740-466b-8972-30173559cdb7" />
 ---
 Produto
 <img width="1904" height="1079" alt="image" src="https://github.com/user-attachments/assets/fe2fb413-09f6-40ed-9c6a-914aa60b6580" />
