@@ -98,6 +98,15 @@ const filtroPrecoMin = document.querySelector("#preco-min");
 const filtroPrecoMax = document.querySelector("#preco-max");
 const breadcrumbCategoria = document.querySelector("#breadcrumb-categoria");
 const breadcrumbCategoriaSeparator = document.querySelector("#breadcrumb-categoria-separator");
+
+if (productSearchInput) {
+  productSearchInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      carregarProdutosPorNome(productSearchInput.value);
+    }
+  });
+}
 const productCategoryLinks = document.querySelectorAll(".products-dropdown a");
 const mainProductsMenuLink = document.querySelector('.menu-item-has-dropdown > a[href*="produtos"]');
 const catalogHeading = document.querySelector("#catalog-heading");
@@ -549,6 +558,15 @@ async function carregarProdutosPorNome(nome) {
       productSearchInput.value = productsState.termoBusca;
     }
 
+    if (!isProductPage) {
+      const query = productsState.termoBusca
+        ? `?search=${encodeURIComponent(productsState.termoBusca)}`
+        : "";
+      const destino = `produtos.html${query}`;
+      window.location.assign(destino);
+      return;
+    }
+
     aplicarFiltrosEOrdenacao();
 }
 
@@ -841,6 +859,11 @@ function obterCategoriaDaUrl() {
   return categoriaStorage || "";
 }
 
+function obterTermoBuscaDaUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("search") || "";
+}
+
 function setCategoriaSelecionada(categoria) {
   productsState.categoria = categoria || "";
 
@@ -908,6 +931,15 @@ function inicializarFiltrosProdutos() {
   if (categoriaUrl) {
     productsState.categoria = categoriaUrl;
   }
+
+  const termoBuscaUrl = obterTermoBuscaDaUrl();
+  if (termoBuscaUrl) {
+    productsState.termoBusca = termoBuscaUrl.trim();
+    if (productSearchInput) {
+      productSearchInput.value = productsState.termoBusca;
+    }
+  }
+
   sessionStorage.removeItem("shopBeautyCategoria");
   atualizarBreadcrumbCategoria();
   atualizarTituloCatalogo();
@@ -974,14 +1006,6 @@ function inicializarFiltrosProdutos() {
     });
   }
 
-  if (productSearchInput) {
-    productSearchInput.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        carregarProdutosPorNome(productSearchInput.value);
-      }
-    });
-  }
 }
 
 function adicionarAoSacola(produto) {
