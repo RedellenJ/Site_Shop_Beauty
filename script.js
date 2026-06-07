@@ -125,6 +125,15 @@ const categoriaAliases = {
   skincare: ["skincare", "skincares", "cuidadodapele", "cuidadopele", "skin", "care"],
 };
 
+function isProdutosPage() {
+  const path = window.location.pathname.toLowerCase();
+  return path.endsWith("/produtos.html") || path.endsWith("/produtos");
+}
+
+function obterTermoBuscaDaUrl() {
+  return new URLSearchParams(window.location.search).get("search") || "";
+}
+
 function obterPayloadToken(token) {
   if (!token) {
     return null;
@@ -543,7 +552,17 @@ async function carregarProdutos() {
 }
 
 async function carregarProdutosPorNome(nome) {
-    productsState.termoBusca = (nome || "").trim();
+    const termoBusca = (nome || "").trim();
+
+    if (!isProdutosPage()) {
+      const destino = termoBusca
+        ? `produtos.html?search=${encodeURIComponent(termoBusca)}`
+        : "produtos.html";
+      window.location.assign(destino);
+      return;
+    }
+
+    productsState.termoBusca = termoBusca;
 
     if (productSearchInput && productSearchInput.value !== productsState.termoBusca) {
       productSearchInput.value = productsState.termoBusca;
@@ -908,6 +927,15 @@ function inicializarFiltrosProdutos() {
   if (categoriaUrl) {
     productsState.categoria = categoriaUrl;
   }
+
+  const searchUrl = obterTermoBuscaDaUrl();
+  if (searchUrl) {
+    productsState.termoBusca = searchUrl;
+    if (productSearchInput) {
+      productSearchInput.value = searchUrl;
+    }
+  }
+
   sessionStorage.removeItem("shopBeautyCategoria");
   atualizarBreadcrumbCategoria();
   atualizarTituloCatalogo();
@@ -973,15 +1001,15 @@ function inicializarFiltrosProdutos() {
       aplicarFiltrosEOrdenacao();
     });
   }
+}
 
-  if (productSearchInput) {
-    productSearchInput.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        carregarProdutosPorNome(productSearchInput.value);
-      }
-    });
-  }
+if (productSearchInput) {
+  productSearchInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      carregarProdutosPorNome(productSearchInput.value);
+    }
+  });
 }
 
 function adicionarAoSacola(produto) {
