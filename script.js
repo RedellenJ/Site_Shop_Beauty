@@ -501,11 +501,7 @@ if (registerForm) {
         );
       }
 
-      if (registerFeedback) {
-        registerFeedback.textContent =
-          payload.mensagem || "Conta criada com sucesso.";
-        registerFeedback.className = "login-feedback success";
-      }
+      window.location.href = "login.html";
 
     } catch (error) {
       if (registerFeedback) {
