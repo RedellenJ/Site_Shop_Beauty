@@ -1486,3 +1486,130 @@ const isSacolaPage = currentPath.endsWith('sacola.html') || currentPath.endsWith
 if (isSacolaPage) {
   exibirSacola();
 }
+
+// ===================== AUTOCOMPLETAR =====================
+const searchInput = document.getElementById('searchInput');
+const searchSuggestions = document.getElementById('searchSuggestions');
+
+if (searchInput && searchSuggestions) {
+  let debounceTimer;
+  let activeSuggestionIndex = -1;
+
+  searchInput.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+
+    const q = searchInput.value.trim();
+
+    if (q.length < 2) {
+      fecharSugestoes();
+      return;
+    }
+
+    debounceTimer = setTimeout(() => buscarSugestoes(q), 300);
+  });
+
+  async function buscarSugestoes(q) {
+    try {
+      const res = await fetch(`${apiBaseUrl}/filtroProdutoNome?nome=${encodeURIComponent(q)}`);
+      const produtos = await res.json();
+      const comImagem = produtos.filter(p => p.imagem_url);
+      renderizarSugestoes(comImagem);
+    } catch (err) {
+      console.error('Erro na busca:', err);
+    }
+  }
+  // Tornar a função disponível para chamadas inline (ex: onclick dos botões)
+  window.buscarSugestoes = buscarSugestoes;
+
+  function renderizarSugestoes(produtos) {
+    searchSuggestions.innerHTML = '';
+
+    if (!produtos.length) {
+      fecharSugestoes();
+      return;
+    }
+
+    activeSuggestionIndex = -1;
+    const itens = produtos.slice(0, 8);
+    itens.forEach((p, idx) => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        ${p.imagem_url ? `<img src="${p.imagem_url}" alt="${p.nome}">` : ''}
+        <span class="produto-nome">${formatarTituloTexto(p.nome)}</span>
+        <span class="produto-preco">${formatarPreco(p.preco)}</span>
+      `;
+      li.addEventListener('click', () => {
+        window.location.href = `produtos.html?search=${encodeURIComponent(p.nome)}`;
+      });
+      searchSuggestions.appendChild(li);
+      // permitir navegação por teclado: marcar index no elemento
+      li.dataset.suggestionIndex = String(idx);
+    });
+
+    searchSuggestions.style.display = 'block';
+    const menuEl = document.querySelector('.menu');
+    if (menuEl) menuEl.classList.add('menu--disabled');
+  }
+
+  // Permitir submeter a busca com a tecla Enter
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const q = searchInput.value.trim();
+      if (q.length >= 1) {
+        buscarSugestoes(q);
+      }
+    }
+  });
+
+  function fecharSugestoes() {
+    searchSuggestions.style.display = 'none';
+    searchSuggestions.innerHTML = '';
+    const menuEl = document.querySelector('.menu');
+    if (menuEl) menuEl.classList.remove('menu--disabled');
+  }
+
+  // Não fechar quando clicar dentro de `.search` (inclui botão de busca)
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search')) {
+      fecharSugestoes();
+    }
+  });
+
+  // Navegação por teclado: setas + Enter
+  searchInput.addEventListener('keydown', (e) => {
+    const items = Array.from(searchSuggestions.querySelectorAll('li'));
+    if (!items.length) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      activeSuggestionIndex = Math.min(activeSuggestionIndex + 1, items.length - 1);
+      items.forEach((it, i) => it.classList.toggle('selected', i === activeSuggestionIndex));
+      items[activeSuggestionIndex].scrollIntoView({ block: 'nearest' });
+      return;
+    }
+
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      activeSuggestionIndex = Math.max(activeSuggestionIndex - 1, 0);
+      items.forEach((it, i) => it.classList.toggle('selected', i === activeSuggestionIndex));
+      items[activeSuggestionIndex].scrollIntoView({ block: 'nearest' });
+      return;
+    }
+
+    if (e.key === 'Enter') {
+      // se houver sugestão selecionada, seguir para ela
+      if (activeSuggestionIndex >= 0 && items[activeSuggestionIndex]) {
+        e.preventDefault();
+        items[activeSuggestionIndex].click();
+        return;
+      }
+      // caso contrário, pesquisar o termo atual
+      e.preventDefault();
+      const q = searchInput.value.trim();
+      if (q.length >= 1) {
+        buscarSugestoes(q);
+      }
+    }
+  });
+}

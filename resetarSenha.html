@@ -24,9 +24,17 @@
         </div>
 
         <div class="search">
-          <input id="productSearch" type="text" placeholder="O que você está buscando?" />
-          <button onclick="carregarProdutosPorNome(document.getElementById('productSearch').value)" type="button" aria-label="Buscar"><i class="fas fa-search"></i></button>
-        </div>
+  <div class="search-wrapper">
+    <input
+      id="searchInput"
+      type="text"
+      placeholder="O que você está buscando?"
+      autocomplete="off"
+    />
+    <ul id="searchSuggestions"></ul>
+  </div>
+  <button onclick="buscarSugestoes(document.getElementById('searchInput').value)" type="button" aria-label="Buscar"><i class="fas fa-search"></i></button>
+</div>
       </div>
 
       <div class="actions">

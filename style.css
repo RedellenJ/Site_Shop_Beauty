@@ -26,6 +26,7 @@
   padding: 40px 60px;
   background-color: #ffffff;
   position: relative;
+  z-index: 9999;
 }
 
 .logo img {
@@ -235,6 +236,9 @@
 .menu {
   background-color: #e7a9a5;
   padding: 30px 0;
+  position: relative;
+  z-index: 100;
+  transition: z-index 0s;
 }
 
 .menu ul {
@@ -314,7 +318,7 @@
     opacity 0.22s ease,
     transform 0.22s ease,
     visibility 0.22s ease;
-  z-index: 40;
+  z-index: 1000;
 }
 
 .products-dropdown::before {
@@ -2480,4 +2484,85 @@ footer {
   background-color: #E8A0A0 !important;
   position: relative;
   z-index: 1;
+}
+
+/* ===================== AUTOCOMPLETAR ===================== */
+.search {
+  overflow: visible; /* sobrescreve o overflow: hidden que cortava a lista */
+}
+
+.search-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+#searchInput {
+  width: 100%;
+  padding: 13px 10px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: transparent;
+}
+
+#searchSuggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: none;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+#searchSuggestions li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#searchSuggestions li:hover {
+  background: #f5f5f5;
+}
+
+#searchSuggestions li.selected {
+  background: #eef3f2;
+}
+
+/* Quando as sugestões estiverem ativas, desabilita apenas os links do menu */
+.menu.menu--disabled a {
+  pointer-events: none;
+  opacity: 0.65;
+}
+
+#searchSuggestions li img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  background: #f7f7f7;
+  padding: 4px;
+  border-radius: 6px;
+  box-sizing: border-box;
+  display: block;
+}
+
+#searchSuggestions .produto-nome {
+  flex: 1;
+}
+
+#searchSuggestions .produto-preco {
+  color: #888;
+  font-size: 12px;
 }
