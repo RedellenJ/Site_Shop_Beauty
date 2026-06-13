@@ -126,6 +126,13 @@ const productsState = {
   precoMax: "",
 };
 
+const popupProdutoState = {
+  produto: null,
+  quantidade: 1,
+  corSelecionada: "",
+  elementos: null,
+};
+
 const apiBaseUrl = "http://localhost:3000";
 
 const categoriaAliases = {
@@ -968,6 +975,231 @@ function formatarTituloTexto(valor) {
   return texto.replace(/(^|\s|[-/])(\p{L})/gu, (match, separador, letra) => `${separador}${letra.toUpperCase()}`);
 }
 
+function obterCoresProduto(produto) {
+  const colecao = [];
+
+  const adicionarItem = (valor) => {
+    if (Array.isArray(valor)) {
+      valor.forEach((item) => adicionarItem(item));
+      return;
+    }
+
+    const texto = (valor || "").toString().trim();
+    if (!texto) {
+      return;
+    }
+
+    const partes = texto.split(/[|,;\n]+/);
+    partes
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .forEach((item) => colecao.push(item));
+  };
+
+  adicionarItem(produto?.cor);
+  adicionarItem(produto?.cores);
+  adicionarItem(produto?.variacao_cor);
+  adicionarItem(produto?.variacoes_cores);
+  adicionarItem(produto?.tonalidades);
+
+  return [...new Set(colecao)];
+}
+
+function obterDescricaoProduto(produto) {
+  const descricao = (
+    produto?.descricao
+    || produto?.descricao_curta
+    || produto?.descricaoCurta
+    || produto?.description
+    || ""
+  ).toString().trim();
+
+  return descricao;
+}
+
+function criarPopupProduto() {
+  if (popupProdutoState.elementos) {
+    return popupProdutoState.elementos;
+  }
+
+  const overlay = document.createElement("div");
+  overlay.className = "produto-popup-overlay";
+  overlay.hidden = true;
+
+  overlay.innerHTML = `
+    <div class="produto-popup" role="dialog" aria-modal="true" aria-labelledby="produto-popup-title">
+      <button class="produto-popup-close" type="button" aria-label="Fechar pop-up">&times;</button>
+      <div class="produto-popup-media">
+        <img class="produto-popup-image" src="" alt="">
+      </div>
+      <div class="produto-popup-content">
+        <h2 id="produto-popup-title" class="produto-popup-title"></h2>
+        <p class="produto-popup-price"></p>
+        <p class="produto-popup-pix"></p>
+        <div class="produto-popup-description-block">
+          <p class="produto-popup-description-label">Descrição:</p>
+          <p class="produto-popup-description-text"></p>
+        </div>
+        <p class="produto-popup-color-title">Cor: <strong class="produto-popup-color-selected"></strong></p>
+        <div class="produto-popup-colors"></div>
+        <div class="produto-popup-actions-row">
+          <div class="produto-popup-quantity" aria-label="Selecionar quantidade">
+            <button class="produto-popup-qty-btn" type="button" data-action="decrease" aria-label="Diminuir quantidade">-</button>
+            <span class="produto-popup-qty-value">1</span>
+            <button class="produto-popup-qty-btn" type="button" data-action="increase" aria-label="Aumentar quantidade">+</button>
+          </div>
+          <button class="produto-popup-buy" type="button">Comprar</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const elementos = {
+    overlay,
+    container: overlay.querySelector(".produto-popup"),
+    closeButton: overlay.querySelector(".produto-popup-close"),
+    image: overlay.querySelector(".produto-popup-image"),
+    title: overlay.querySelector(".produto-popup-title"),
+    price: overlay.querySelector(".produto-popup-price"),
+    pix: overlay.querySelector(".produto-popup-pix"),
+    descriptionLabel: overlay.querySelector(".produto-popup-description-label"),
+    descriptionText: overlay.querySelector(".produto-popup-description-text"),
+    colorTitle: overlay.querySelector(".produto-popup-color-title"),
+    colorSelected: overlay.querySelector(".produto-popup-color-selected"),
+    colors: overlay.querySelector(".produto-popup-colors"),
+    qtyValue: overlay.querySelector(".produto-popup-qty-value"),
+    buyButton: overlay.querySelector(".produto-popup-buy"),
+  };
+
+  const atualizarQuantidade = (passo) => {
+    const novoValor = popupProdutoState.quantidade + passo;
+    popupProdutoState.quantidade = Math.max(1, Math.min(99, novoValor));
+    elementos.qtyValue.textContent = String(popupProdutoState.quantidade);
+  };
+
+  const fecharPopup = () => {
+    overlay.hidden = true;
+    document.body.classList.remove("produto-popup-open");
+    popupProdutoState.produto = null;
+  };
+
+  overlay.addEventListener("click", (event) => {
+    const alvoFechar = event.target instanceof Element
+      ? event.target.closest(".produto-popup-close")
+      : null;
+
+    if (alvoFechar) {
+      event.preventDefault();
+      event.stopPropagation();
+      fecharPopup();
+      return;
+    }
+
+    if (event.target === overlay) {
+      fecharPopup();
+    }
+  });
+
+  elementos.closeButton.addEventListener("click", fecharPopup);
+
+  overlay.querySelectorAll(".produto-popup-qty-btn").forEach((botao) => {
+    botao.addEventListener("click", () => {
+      const passo = botao.dataset.action === "decrease" ? -1 : 1;
+      atualizarQuantidade(passo);
+    });
+  });
+
+  elementos.buyButton.addEventListener("click", () => {
+    if (!popupProdutoState.produto) {
+      return;
+    }
+
+    adicionarAoSacola(popupProdutoState.produto, popupProdutoState.quantidade);
+    fecharPopup();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (!overlay.hidden && event.key === "Escape") {
+      fecharPopup();
+    }
+  });
+
+  popupProdutoState.elementos = {
+    ...elementos,
+    fecharPopup,
+  };
+
+  return popupProdutoState.elementos;
+}
+
+function abrirPopupProduto(produto) {
+  if (!isProductPage || !produto) {
+    return;
+  }
+
+  const elementos = criarPopupProduto();
+  popupProdutoState.produto = produto;
+  popupProdutoState.quantidade = 1;
+
+  const imagem = produto.imagem_url || "https://via.placeholder.com/400x400?text=Sem+Imagem";
+  const preco = Number(produto.preco || 0);
+  const precoPix = preco * 0.95;
+  const nome = formatarTituloTexto(produto.nome) || "Produto";
+  const marca = formatarTituloTexto(produto.marca) || "Sem marca";
+  const descricao = obterDescricaoProduto(produto);
+  const cores = obterCoresProduto(produto);
+  const primeiraCor = cores[0] || "Cor única";
+
+  popupProdutoState.corSelecionada = primeiraCor;
+
+  elementos.image.src = imagem;
+  elementos.image.alt = nome;
+  elementos.title.textContent = `${nome} - ${marca}`;
+  elementos.price.textContent = formatarPreco(preco);
+  elementos.pix.textContent = `${formatarPreco(precoPix)} com Pix`;
+  elementos.descriptionText.textContent = descricao || "Sem descrição disponível para este produto.";
+  elementos.qtyValue.textContent = "1";
+  elementos.colorSelected.textContent = primeiraCor;
+
+  elementos.colors.innerHTML = "";
+
+  if (cores.length <= 1) {
+    elementos.colorTitle.hidden = true;
+    elementos.colors.hidden = true;
+  } else {
+    elementos.colorTitle.hidden = false;
+    elementos.colors.hidden = false;
+
+    cores.forEach((cor, index) => {
+      const botaoCor = document.createElement("button");
+      botaoCor.className = "produto-popup-color-btn";
+      botaoCor.type = "button";
+      botaoCor.textContent = cor;
+      botaoCor.setAttribute("aria-pressed", index === 0 ? "true" : "false");
+      if (index === 0) {
+        botaoCor.classList.add("is-active");
+      }
+
+      botaoCor.addEventListener("click", () => {
+        popupProdutoState.corSelecionada = cor;
+        elementos.colorSelected.textContent = cor;
+        elementos.colors.querySelectorAll(".produto-popup-color-btn").forEach((item) => {
+          const ativo = item === botaoCor;
+          item.classList.toggle("is-active", ativo);
+          item.setAttribute("aria-pressed", ativo ? "true" : "false");
+        });
+      });
+
+      elementos.colors.appendChild(botaoCor);
+    });
+  }
+
+  elementos.overlay.hidden = false;
+  document.body.classList.add("produto-popup-open");
+}
+
 function renderizarProdutos(produtos) {
   if (!productsGrid) {
     return;
@@ -1009,8 +1241,22 @@ function renderizarProdutos(produtos) {
       <button class="btn-adicionar" type="button">COMPRAR</button>
     `;
 
+    const imagemBox = card.querySelector(".produto-imagem-box");
+    if (imagemBox) {
+      imagemBox.setAttribute("role", "button");
+      imagemBox.setAttribute("tabindex", "0");
+      imagemBox.setAttribute("aria-label", `Abrir detalhes de ${nomeFormatado}`);
+      imagemBox.addEventListener("click", () => abrirPopupProduto(produto));
+      imagemBox.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          abrirPopupProduto(produto);
+        }
+      });
+    }
+
     const botao = card.querySelector(".btn-adicionar");
-    botao.addEventListener("click", () => adicionarAoSacola(produto));
+    botao.addEventListener("click", () => abrirPopupProduto(produto));
 
     productsGrid.appendChild(card);
   });
@@ -1176,7 +1422,11 @@ function inicializarFiltrosProdutos() {
 
 }
 
-function adicionarAoSacola(produto) {
+function adicionarAoSacola(produto, quantidade = 1) {
+
+    const qtdSelecionada = Number.isFinite(Number(quantidade))
+      ? Math.max(1, Math.floor(Number(quantidade)))
+      : 1;
 
     const token = localStorage.getItem('token');
 
@@ -1191,10 +1441,10 @@ function adicionarAoSacola(produto) {
     const index = sacola.findIndex(item => item.id === produto.id)
 
     if (index >= 0) {
-      sacola[index].quantidade += 1
+      sacola[index].quantidade += qtdSelecionada
       alert(`Quantidade de ${produto.nome} foi atualizada para ${sacola[index].quantidade}!`)
     } else {
-      sacola.push({ ...produto, quantidade: 1 })
+      sacola.push({ ...produto, quantidade: qtdSelecionada })
       alert(`${produto.nome} foi adicionado à sua sacola!`)
     }
 
