@@ -1,9 +1,9 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shop Beauty | Login</title>
+    <title>Shop Beauty | Redefinir Senha</title>
 
     <link rel="icon" type="image/png" href="Img/Logos/Logo3.png" />
     <link rel="stylesheet" href="style.css" />
@@ -12,7 +12,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
   </head>
-  <body class="login-page">
+  <body class="login-page reset-page">
     <div class="top-bar"></div>
 
     <header class="header">
@@ -78,65 +78,77 @@
       <span>Você está em:</span>
       <a class="breadcrumb-home" href="index.html">INÍCIO</a>
       <span class="separator">&gt;</span>
-      <span class="breadcrumb-current">LOGIN</span>
+      <a class="breadcrumb-account" href="login.html">MINHA CONTA</a>
+      <span class="separator">&gt;</span>
+      <span class="breadcrumb-current">REDEFINIR SENHA</span>
     </div>
 
     <main class="login-main">
       <section class="login-hero">
         <div class="login-column login-form-box">
-          <h1>INICIAR SESSÃO</h1>
+          <h1>REDEFINIR SENHA</h1>
 
           <form
-            id="login-form"
+            id="reset-form"
             class="login-form"
-            data-login-endpoint="http://localhost:3000/loginClientes"
+            data-reset-endpoint="http://localhost:3000/resetarSenha"
           >
-            <label for="login-email">E-mail</label>
-            <input
-              id="login-email"
-              name="email"
-              type="email"
-              placeholder="ex.: email@gmail.com.br"
-              autocomplete="email"
-              required
-            />
-
-            <label for="login-password">Senha</label>
+            <label for="reset-password">Nova senha</label>
             <div class="password-field">
               <input
-                id="login-password"
+                id="reset-password"
                 name="password"
                 type="password"
                 placeholder="ex.: suasenha"
-                autocomplete="current-password"
+                autocomplete="new-password"
                 minlength="6"
                 required
               />
               <button
-                id="toggle-password"
                 class="password-toggle"
-                data-target="login-password"
+                data-target="reset-password"
                 type="button"
-                aria-label="Mostrar ou ocultar senha"
-                title="Mostrar ou ocultar senha"
+                aria-label="Mostrar ou ocultar nova senha"
+                title="Mostrar ou ocultar nova senha"
               >
                 <i class="fas fa-eye-slash" aria-hidden="true"></i>
               </button>
             </div>
 
-            <a class="forgot-password" href="recuperar-senha.html"
-              >Esqueceu sua senha?</a
-            >
+            <label for="reset-password-confirm">Confirme a nova senha</label>
+            <div class="password-field">
+              <input
+                id="reset-password-confirm"
+                name="passwordConfirm"
+                type="password"
+                autocomplete="new-password"
+                minlength="6"
+                required
+              />
+              <button
+                class="password-toggle"
+                data-target="reset-password-confirm"
+                type="button"
+                aria-label="Mostrar ou ocultar confirmacao da nova senha"
+                title="Mostrar ou ocultar confirmacao da nova senha"
+              >
+                <i class="fas fa-eye-slash" aria-hidden="true"></i>
+              </button>
+            </div>
 
-            <button class="login-submit" type="submit">INICIAR SESSÃO</button>
+            <p class="register-text reset-note">
+              Use o mesmo e-mail onde recebeu o link para recuperar a senha.
+            </p>
+
+            <button class="login-submit" type="submit">SALVAR NOVA SENHA</button>
 
             <p class="register-text">
-              Não possui uma conta ainda?
-              <a href="cadastro.html">Crie sua conta</a>
+              Quer voltar agora?
+              <a href="login.html">Ir para login</a>
             </p>
 
             <p
-              id="login-feedback"
+              id="reset-feedback"
               class="login-feedback"
               aria-live="polite"
             ></p>
@@ -221,8 +233,3 @@
     </script>
   </body>
 </html>
-
-
-
-
-

@@ -1,9 +1,9 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shop Beauty | Login</title>
+    <title>Shop Beauty | Recuperar Senha</title>
 
     <link rel="icon" type="image/png" href="Img/Logos/Logo3.png" />
     <link rel="stylesheet" href="style.css" />
@@ -12,7 +12,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
   </head>
-  <body class="login-page">
+  <body class="login-page forgot-page">
     <div class="top-bar"></div>
 
     <header class="header">
@@ -78,22 +78,24 @@
       <span>Você está em:</span>
       <a class="breadcrumb-home" href="index.html">INÍCIO</a>
       <span class="separator">&gt;</span>
-      <span class="breadcrumb-current">LOGIN</span>
+      <a class="breadcrumb-account" href="login.html">MINHA CONTA</a>
+      <span class="separator">&gt;</span>
+      <span class="breadcrumb-current">RECUPERAR SENHA</span>
     </div>
 
     <main class="login-main">
       <section class="login-hero">
         <div class="login-column login-form-box">
-          <h1>INICIAR SESSÃO</h1>
+          <h1>RECUPERAR SENHA</h1>
 
           <form
-            id="login-form"
+            id="forgot-form"
             class="login-form"
-            data-login-endpoint="http://localhost:3000/loginClientes"
+            data-forgot-endpoint="http://localhost:3000/recuperarSenha"
           >
-            <label for="login-email">E-mail</label>
+            <label for="forgot-email">E-mail</label>
             <input
-              id="login-email"
+              id="forgot-email"
               name="email"
               type="email"
               placeholder="ex.: email@gmail.com.br"
@@ -101,42 +103,19 @@
               required
             />
 
-            <label for="login-password">Senha</label>
-            <div class="password-field">
-              <input
-                id="login-password"
-                name="password"
-                type="password"
-                placeholder="ex.: suasenha"
-                autocomplete="current-password"
-                minlength="6"
-                required
-              />
-              <button
-                id="toggle-password"
-                class="password-toggle"
-                data-target="login-password"
-                type="button"
-                aria-label="Mostrar ou ocultar senha"
-                title="Mostrar ou ocultar senha"
-              >
-                <i class="fas fa-eye-slash" aria-hidden="true"></i>
-              </button>
-            </div>
+            <p class="register-text forgot-description">
+              Enviaremos um link para redefinir sua senha no e-mail informado.
+            </p>
 
-            <a class="forgot-password" href="recuperar-senha.html"
-              >Esqueceu sua senha?</a
-            >
-
-            <button class="login-submit" type="submit">INICIAR SESSÃO</button>
+            <button class="login-submit" type="submit">ENVIAR LINK</button>
 
             <p class="register-text">
-              Não possui uma conta ainda?
-              <a href="cadastro.html">Crie sua conta</a>
+              Lembrou sua senha?
+              <a href="login.html">Voltar para login</a>
             </p>
 
             <p
-              id="login-feedback"
+              id="forgot-feedback"
               class="login-feedback"
               aria-live="polite"
             ></p>
@@ -221,8 +200,3 @@
     </script>
   </body>
 </html>
-
-
-
-
-

@@ -1243,6 +1243,22 @@
   color: #cf6663;
 }
 
+.forgot-description {
+  margin: -6px 0 18px;
+  text-align: left;
+  font-size: 17px;
+  line-height: 1.35;
+  color: #4b4b4b;
+}
+
+.reset-note {
+  margin: -6px 0 18px;
+  text-align: left;
+  font-size: 17px;
+  line-height: 1.35;
+  color: #4b4b4b;
+}
+
 .login-feedback {
   min-height: 24px;
   margin-top: 8px;
@@ -1535,6 +1551,14 @@
     font-size: 17px;
   }
 
+  .forgot-description {
+    font-size: 16px;
+  }
+
+  .reset-note {
+    font-size: 16px;
+  }
+
   .login-submit {
     font-size: 26px;
   }
@@ -1692,6 +1716,16 @@
   .forgot-password,
   .register-text {
     font-size: 16px;
+  }
+
+  .forgot-description {
+    font-size: 15px;
+    margin: -4px 0 14px;
+  }
+
+  .reset-note {
+    font-size: 15px;
+    margin: -4px 0 14px;
   }
 
   .login-submit {

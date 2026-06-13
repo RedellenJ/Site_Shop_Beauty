@@ -77,6 +77,10 @@ const contactForm = document.querySelector(".contact-form");
 const phoneField = document.querySelector("#telefone");
 const loginForm = document.querySelector("#login-form");
 const loginFeedback = document.querySelector("#login-feedback");
+const forgotForm = document.querySelector("#forgot-form");
+const forgotFeedback = document.querySelector("#forgot-feedback");
+const resetForm = document.querySelector("#reset-form");
+const resetFeedback = document.querySelector("#reset-feedback");
 const registerForm = document.querySelector("#register-form");
 const registerPhoneField = document.querySelector("#register-phone");
 const registerFeedback = document.querySelector("#register-feedback");
@@ -398,6 +402,174 @@ if (loginForm) {
             ? error.message
             : "Não foi possível concluir o login agora.";
         loginFeedback.className = "login-feedback error";
+      }
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
+    }
+  });
+}
+
+if (forgotForm) {
+  forgotForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const emailField = document.querySelector("#forgot-email");
+    const submitButton = forgotForm.querySelector(".login-submit");
+    const email = emailField ? emailField.value.trim() : "";
+
+    if (!email) {
+      if (forgotFeedback) {
+        forgotFeedback.textContent = "Informe o e-mail para recuperar sua senha.";
+        forgotFeedback.className = "login-feedback error";
+      }
+      return;
+    }
+
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+
+    if (forgotFeedback) {
+      forgotFeedback.textContent = "Enviando link de recuperação...";
+      forgotFeedback.className = "login-feedback";
+    }
+
+    const endpoint =
+      forgotForm.getAttribute("data-forgot-endpoint") ||
+      "http://localhost:3000/recuperarSenha";
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          payload.erro || payload.mensagem || "Falha ao enviar e-mail de recuperação.",
+        );
+      }
+
+      if (forgotFeedback) {
+        forgotFeedback.textContent =
+          payload.mensagem || "Enviamos o link de recuperação para o seu e-mail.";
+        forgotFeedback.className = "login-feedback success";
+      }
+      forgotForm.reset();
+    } catch (error) {
+      if (forgotFeedback) {
+        forgotFeedback.textContent =
+          error instanceof Error
+            ? error.message
+            : "Não foi possível enviar o e-mail de recuperação agora.";
+        forgotFeedback.className = "login-feedback error";
+      }
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
+    }
+  });
+}
+
+if (resetForm) {
+  resetForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const passwordField = document.querySelector("#reset-password");
+    const confirmPasswordField = document.querySelector("#reset-password-confirm");
+    const submitButton = resetForm.querySelector(".login-submit");
+
+    const senha = passwordField ? passwordField.value : "";
+    const confirmaSenha = confirmPasswordField ? confirmPasswordField.value : "";
+    const token = new URLSearchParams(window.location.search).get("token") || "";
+
+    if (!token) {
+      if (resetFeedback) {
+        resetFeedback.textContent = "Link inválido ou expirado. Solicite uma nova recuperação de senha.";
+        resetFeedback.className = "login-feedback error";
+      }
+      return;
+    }
+
+    if (!senha || !confirmaSenha) {
+      if (resetFeedback) {
+        resetFeedback.textContent = "Preencha os dois campos de senha.";
+        resetFeedback.className = "login-feedback error";
+      }
+      return;
+    }
+
+    if (senha.length < 6) {
+      if (resetFeedback) {
+        resetFeedback.textContent = "A nova senha deve ter no minimo 6 caracteres.";
+        resetFeedback.className = "login-feedback error";
+      }
+      return;
+    }
+
+    if (senha !== confirmaSenha) {
+      if (resetFeedback) {
+        resetFeedback.textContent = "As senhas precisam ser iguais.";
+        resetFeedback.className = "login-feedback error";
+      }
+      return;
+    }
+
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+
+    if (resetFeedback) {
+      resetFeedback.textContent = "Redefinindo sua senha...";
+      resetFeedback.className = "login-feedback";
+    }
+
+    const endpoint =
+      resetForm.getAttribute("data-reset-endpoint") ||
+      "http://localhost:3000/resetarSenha";
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ senha, token }),
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          payload.erro || payload.mensagem || "Falha ao redefinir senha.",
+        );
+      }
+
+      if (resetFeedback) {
+        resetFeedback.textContent =
+          payload.mensagem || "Senha redefinida com sucesso!";
+        resetFeedback.className = "login-feedback success";
+      }
+
+      resetForm.reset();
+      window.setTimeout(() => {
+        window.location.href = "login.html";
+      }, 1400);
+    } catch (error) {
+      if (resetFeedback) {
+        resetFeedback.textContent =
+          error instanceof Error
+            ? error.message
+            : "Nao foi possivel redefinir sua senha agora.";
+        resetFeedback.className = "login-feedback error";
       }
     } finally {
       if (submitButton) {
