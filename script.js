@@ -1368,6 +1368,114 @@ document.addEventListener("click", (event) => {
   window.location.assign(destino);
 });
 
+const recuperarForm = document.querySelector("#recuperar-form");
+const recuperarFeedback = document.querySelector("#recuperar-feedback");
+
+if (recuperarForm) {
+  recuperarForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const emailField = document.querySelector("#recuperar-email");
+    const email = emailField ? emailField.value.trim() : "";
+
+    if (!email) {
+      if (recuperarFeedback) {
+        recuperarFeedback.textContent = "Informe seu e-mail para continuar.";
+        recuperarFeedback.className = "login-feedback error";
+      }
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:3000/recuperarSenha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(payload.erro || "Falha ao enviar o e-mail.");
+      }
+
+      if (recuperarFeedback) {
+        recuperarFeedback.textContent = payload.mensagem || "E-mail enviado com sucesso.";
+        recuperarFeedback.className = "login-feedback success";
+      }
+
+    } catch (error) {
+      if (recuperarFeedback) {
+        recuperarFeedback.textContent = error.message;
+        recuperarFeedback.className = "login-feedback error";
+      }
+    }
+  });
+}
+
+const resetarForm = document.querySelector("#resetar-form");
+const resetarFeedback = document.querySelector("#resetar-feedback");
+
+const params = new URLSearchParams(window.location.search);
+const token = params.get("token");
+
+if (resetarForm) {
+  resetarForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const senhaField = document.querySelector("#nova-senha");
+    const confirmaField = document.querySelector("#confirma-senha");
+
+    const senha = senhaField ? senhaField.value : "";
+    const confirmaSenha = confirmaField ? confirmaField.value : "";
+
+    if (!senha || !confirmaSenha) {
+      if (resetarFeedback) {
+        resetarFeedback.textContent = "Preencha todos os campos.";
+        resetarFeedback.className = "login-feedback error";
+      }
+      return;
+    }
+
+    if (senha !== confirmaSenha) {
+      if (resetarFeedback) {
+        resetarFeedback.textContent = "As senhas precisam ser iguais.";
+        resetarFeedback.className = "login-feedback error";
+      }
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:3000/resetarSenha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, senha }),
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(payload.erro || "Falha ao redefinir a senha.");
+      }
+
+      if (resetarFeedback) {
+        resetarFeedback.textContent = payload.mensagem || "Senha redefinida com sucesso.";
+        resetarFeedback.className = "login-feedback success";
+      }
+
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 2000);
+
+    } catch (error) {
+      if (resetarFeedback) {
+        resetarFeedback.textContent = error.message;
+        resetarFeedback.className = "login-feedback error";
+      }
+    }
+  });
+}
+
 if (isProductPage) {
   inicializarFiltrosProdutos();
   carregarProdutos();
