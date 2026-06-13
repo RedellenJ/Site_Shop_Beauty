@@ -1,4 +1,81 @@
-﻿const banner = document.querySelector(".banner");
+﻿(function () {
+
+  const style = document.createElement("style");
+
+  style.textContent = `
+    #toast-container {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+    .toast-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 28px;
+      border-radius: 12px;
+      border: 0.5px solid;
+      font-size: 16px;
+      font-family: sans-serif;
+      max-width: 500px;
+      pointer-events: all;
+      animation: toastIn .25s ease;
+      transition: opacity .3s ease, transform .3s ease;
+    }
+    .toast-item.hide {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .toast-item.success {
+      background: #eaf3de;
+      border-color: #639922;
+      color: #27500a;
+    }
+    .toast-item.error {
+      background: #fcebeb;
+      border-color: #a32d2d;
+      color: #501313;
+    }
+    .toast-item.info {
+      background: #e6f1fb;
+      border-color: #185fa5;
+      color: #0c447c;
+    }
+    .toast-icon { font-size: 18px; flex-shrink: 0; }`;
+  
+    document.head.appendChild(style);
+
+  const container = document.createElement("div");
+  container.id = "toast-container";
+  document.body.appendChild(container);
+
+  const icons = { success: "✔", error: "✖", info: "ℹ" };
+
+  window.showToast = function (message, type = "info", duration = 3500) {
+    const item = document.createElement("div");
+    item.className = `toast-item ${type}`;
+    item.innerHTML = `<span class="toast-icon">${icons[type] ?? "ℹ"}</span><span>${message}</span>`;
+    container.appendChild(item);
+
+    setTimeout(() => {
+      item.classList.add("hide");
+      setTimeout(() => item.remove(), 350);
+    }, duration);
+  };
+})();
+
+const banner = document.querySelector(".banner");
 const leftArrow = document.querySelector(".left");
 const rightArrow = document.querySelector(".right");
 const dots = document.querySelectorAll(".dots span");
@@ -76,17 +153,11 @@ if (menuLinks.length > 0) {
 const contactForm = document.querySelector(".contact-form");
 const phoneField = document.querySelector("#telefone");
 const loginForm = document.querySelector("#login-form");
-const loginFeedback = document.querySelector("#login-feedback");
-const forgotForm = document.querySelector("#forgot-form");
-const forgotFeedback = document.querySelector("#forgot-feedback");
-const resetForm = document.querySelector("#reset-form");
-const resetFeedback = document.querySelector("#reset-feedback");
 const registerForm = document.querySelector("#register-form");
+const resetarForm = document.querySelector("#resetar-form");
 const registerPhoneField = document.querySelector("#register-phone");
-const registerFeedback = document.querySelector("#register-feedback");
-const passwordToggleButtons = document.querySelectorAll(
-  ".password-toggle[data-target]",
-);
+const recuperarForm = document.querySelector("#recuperar-form");
+const passwordToggleButtons = document.querySelectorAll(".password-toggle[data-target]",);
 const actionAccount = document.querySelector(".action-account");
 const actionAccountText = actionAccount ? actionAccount.querySelector("span") : null;
 const defaultAccountHtml = actionAccountText ? actionAccountText.innerHTML : "";
@@ -243,7 +314,8 @@ function atualizarAreaConta() {
     localStorage.removeItem("userName");
     localStorage.removeItem("sacola");
     atualizarAreaConta();
-    window.location.href = "index.html";
+    showToast("Você saiu da sua conta.", "error");
+    setTimeout(() => { window.location.href = "index.html"; }, 1500);
   };
 
   if (!dropdownExistente) {
@@ -303,7 +375,8 @@ if (contactForm) {
     ].join("\n");
 
     const mailtoUrl = `mailto:${recipientEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-    window.location.href = mailtoUrl;
+    showToast("Mensagem enviada com sucesso! Obrigado pelo contato.", "success");
+    setTimeout(() => { window.location.href = mailtoUrl; }, 1500);
   });
 }
 
@@ -350,20 +423,12 @@ if (loginForm) {
     const senha = passwordField ? passwordField.value : "";
 
     if (!email || !senha) {
-      if (loginFeedback) {
-        loginFeedback.textContent = "Preencha e-mail e senha para continuar.";
-        loginFeedback.className = "login-feedback error";
-      }
+      showToast("Preencha e-mail e senha para continuar.", "error");
       return;
     }
 
     if (submitButton) {
       submitButton.disabled = true;
-    }
-
-    if (loginFeedback) {
-      loginFeedback.textContent = "Validando login...";
-      loginFeedback.className = "login-feedback";
     }
 
     const endpoint =
@@ -387,12 +452,6 @@ if (loginForm) {
         );
       }
 
-      if (loginFeedback) {
-        loginFeedback.textContent =
-          payload.mensagem || "Login realizado com sucesso.";
-        loginFeedback.className = "login-feedback success";
-      }
-
       localStorage.setItem('token', payload.token)
       if (payload.nome) {
         localStorage.setItem("userName", formatarNomeUsuario(payload.nome));
@@ -400,59 +459,54 @@ if (loginForm) {
         localStorage.setItem("userName", formatarNomeUsuario(payload.email.split("@")[0] || "Minha Conta"));
       }
       atualizarAreaConta();
-      window.location.href = "index.html";
+      showToast(payload.mensagem || "Login realizado com sucesso.", "success");
+      setTimeout(() => { window.location.href = "index.html"; }, 1500);
+      return;
 
-    } catch (error) {
-      if (loginFeedback) {
-        loginFeedback.textContent =
-          error instanceof Error
-            ? error.message
-            : "Não foi possível concluir o login agora.";
-        loginFeedback.className = "login-feedback error";
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Não foi possível concluir o login agora.", "error");
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+        }
       }
-    } finally {
-      if (submitButton) {
-        submitButton.disabled = false;
-      }
-    }
   });
 }
 
-if (forgotForm) {
-  forgotForm.addEventListener("submit", async (event) => {
+const currentPath = window.location.pathname.toLowerCase();
+
+const isResetarPage = currentPath.endsWith('resetar-senha.html');
+  if (isResetarPage) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userName");
+    atualizarAreaConta();
+  }
+
+if (recuperarForm) {
+  recuperarForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const emailField = document.querySelector("#forgot-email");
-    const submitButton = forgotForm.querySelector(".login-submit");
+    const emailField = document.querySelector("#recuperar-email");
+    const submitButton = recuperarForm.querySelector(".login-submit");
     const email = emailField ? emailField.value.trim() : "";
 
     if (!email) {
-      if (forgotFeedback) {
-        forgotFeedback.textContent = "Informe o e-mail para recuperar sua senha.";
-        forgotFeedback.className = "login-feedback error";
-      }
-      return;
+        showToast("Informe o e-mail para recuperar sua senha.", "error");
+        return;
     }
 
     if (submitButton) {
       submitButton.disabled = true;
     }
 
-    if (forgotFeedback) {
-      forgotFeedback.textContent = "Enviando link de recuperação...";
-      forgotFeedback.className = "login-feedback";
-    }
-
     const endpoint =
-      forgotForm.getAttribute("data-forgot-endpoint") ||
+      recuperarForm.getAttribute("data-forgot-endpoint") ||
       "http://localhost:3000/recuperarSenha";
 
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch("http://localhost:3000/recuperarSenha", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
 
@@ -464,20 +518,16 @@ if (forgotForm) {
         );
       }
 
-      if (forgotFeedback) {
-        forgotFeedback.textContent =
-          payload.mensagem || "Enviamos o link de recuperação para o seu e-mail.";
-        forgotFeedback.className = "login-feedback success";
-      }
-      forgotForm.reset();
+      showToast(
+        "Link de recuperação enviado com sucesso. Verifique seu e-mail.", "success");
+        setTimeout(() => {
+        window.location.href = "login.html";
+      }, 2000);
+
+      recuperarForm.reset();
     } catch (error) {
-      if (forgotFeedback) {
-        forgotFeedback.textContent =
-          error instanceof Error
-            ? error.message
-            : "Não foi possível enviar o e-mail de recuperação agora.";
-        forgotFeedback.className = "login-feedback error";
-      }
+        showToast(error instanceof Error ? error.message : "Não foi possível enviar o e-mail de recuperação agora.", "error");
+
     } finally {
       if (submitButton) {
         submitButton.disabled = false;
@@ -486,47 +536,38 @@ if (forgotForm) {
   });
 }
 
-if (resetForm) {
-  resetForm.addEventListener("submit", async (event) => {
+const params = new URLSearchParams(window.location.search);
+const token = params.get("token");
+
+if (resetarForm) {
+  resetarForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const passwordField = document.querySelector("#reset-password");
     const confirmPasswordField = document.querySelector("#reset-password-confirm");
-    const submitButton = resetForm.querySelector(".login-submit");
+    const submitButton = resetarForm.querySelector(".login-submit");
 
     const senha = passwordField ? passwordField.value : "";
     const confirmaSenha = confirmPasswordField ? confirmPasswordField.value : "";
     const token = new URLSearchParams(window.location.search).get("token") || "";
 
     if (!token) {
-      if (resetFeedback) {
-        resetFeedback.textContent = "Link inválido ou expirado. Solicite uma nova recuperação de senha.";
-        resetFeedback.className = "login-feedback error";
-      }
-      return;
+        showToast("Link inválido ou expirado. Solicite uma nova recuperação de senha.", "error");
+        return;
     }
 
     if (!senha || !confirmaSenha) {
-      if (resetFeedback) {
-        resetFeedback.textContent = "Preencha os dois campos de senha.";
-        resetFeedback.className = "login-feedback error";
-      }
-      return;
+        showToast("Preencha os dois campos de senha.", "error");
+        return;
     }
 
     if (senha.length < 6) {
-      if (resetFeedback) {
-        resetFeedback.textContent = "A nova senha deve ter no minimo 6 caracteres.";
-        resetFeedback.className = "login-feedback error";
-      }
-      return;
+        showToast("A nova senha deve ter no mínimo 6 caracteres.", "error");
+        return;
     }
 
     if (senha !== confirmaSenha) {
-      if (resetFeedback) {
-        resetFeedback.textContent = "As senhas precisam ser iguais.";
-        resetFeedback.className = "login-feedback error";
-      }
+      showToast("As senhas precisam ser iguais.", "error");
       return;
     }
 
@@ -534,21 +575,14 @@ if (resetForm) {
       submitButton.disabled = true;
     }
 
-    if (resetFeedback) {
-      resetFeedback.textContent = "Redefinindo sua senha...";
-      resetFeedback.className = "login-feedback";
-    }
-
     const endpoint =
-      resetForm.getAttribute("data-reset-endpoint") ||
+      resetarForm.getAttribute("data-reset-endpoint") ||
       "http://localhost:3000/resetarSenha";
 
     try {
       const response = await fetch(endpoint, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ senha, token }),
       });
 
@@ -560,24 +594,18 @@ if (resetForm) {
         );
       }
 
-      if (resetFeedback) {
-        resetFeedback.textContent =
-          payload.mensagem || "Senha redefinida com sucesso!";
-        resetFeedback.className = "login-feedback success";
-      }
+      localStorage.removeItem("token");
+      localStorage.removeItem("userName");
+      atualizarAreaConta();
 
-      resetForm.reset();
-      window.setTimeout(() => {
-        window.location.href = "login.html";
-      }, 1400);
+      showToast("Senha redefinida com sucesso!", "success");
+      setTimeout(() => {
+      window.close();
+      }, 3000);
+            
+      resetarForm.reset();
     } catch (error) {
-      if (resetFeedback) {
-        resetFeedback.textContent =
-          error instanceof Error
-            ? error.message
-            : "Nao foi possivel redefinir sua senha agora.";
-        resetFeedback.className = "login-feedback error";
-      }
+        showToast(error instanceof Error ? error.message : "Não foi possível redefinir sua senha agora.", "error");
     } finally {
       if (submitButton) {
         submitButton.disabled = false;
@@ -610,26 +638,16 @@ if (registerForm) {
       : "";
 
     if (!nome || !email || !telefone || !senha || !confirmaSenha) {
-      if (registerFeedback) {
-        registerFeedback.textContent =
-          "Preencha todos os campos para continuar.";
-        registerFeedback.className = "login-feedback error";
-      }
-      return;
+        showToast("Preencha todos os campos para continuar.", "error");
+        return;
     }
 
     if (!isValidPhoneDigits(telefone)) {
       if (registerPhoneField) {
-        registerPhoneField.setCustomValidity(
-          "Informe um telefone com 11 dígitos.",
-        );
+        registerPhoneField.setCustomValidity("Informe um telefone com 11 dígitos.");
         registerPhoneField.reportValidity();
       }
-
-      if (registerFeedback) {
-        registerFeedback.textContent = "Telefone deve ter exatamente 11 dígitos.";
-        registerFeedback.className = "login-feedback error";
-      }
+      showToast("Telefone deve ter exatamente 11 dígitos.", "error");
       return;
     }
 
@@ -638,20 +656,12 @@ if (registerForm) {
     }
 
     if (senha !== confirmaSenha) {
-      if (registerFeedback) {
-        registerFeedback.textContent = "As senhas precisam ser iguais.";
-        registerFeedback.className = "login-feedback error";
-      }
+      showToast("As senhas precisam ser iguais.", "error");
       return;
     }
 
     if (submitButton) {
       submitButton.disabled = true;
-    }
-
-    if (registerFeedback) {
-      registerFeedback.textContent = "Criando sua conta...";
-      registerFeedback.className = "login-feedback";
     }
 
     const endpoint =
@@ -680,16 +690,11 @@ if (registerForm) {
         );
       }
 
-      window.location.href = "login.html";
+      showToast("Conta criada com sucesso! Redirecionando para o login...", "success");
+      setTimeout(() => { window.location.href = "login.html"; }, 1500);
 
     } catch (error) {
-      if (registerFeedback) {
-        registerFeedback.textContent =
-          error instanceof Error
-            ? error.message
-            : "Não foi possível concluir o cadastro agora.";
-        registerFeedback.className = "login-feedback error";
-      }
+        showToast(error instanceof Error ? error.message : "Não foi possível concluir o cadastro agora.", "error");
     } finally {
       if (submitButton) {
         submitButton.disabled = false;
@@ -1431,8 +1436,8 @@ function adicionarAoSacola(produto, quantidade = 1) {
     const token = localStorage.getItem('token');
 
     if (!token) {
-        alert('Você precisa estar logado para adicionar produtos à sacola.');
-        window.location.href = 'login.html';
+        showToast('Você precisa estar logado para adicionar produtos à sacola.', 'error');
+        setTimeout(() => { window.location.href = 'login.html'; }, 2000);
         return;
     }
 
@@ -1442,10 +1447,10 @@ function adicionarAoSacola(produto, quantidade = 1) {
 
     if (index >= 0) {
       sacola[index].quantidade += qtdSelecionada
-      alert(`Quantidade de ${produto.nome} foi atualizada para ${sacola[index].quantidade}!`)
+      showToast(`Quantidade de "${formatarTituloTexto(produto.nome)}" atualizada para ${sacola[index].quantidade}!`, 'info');
     } else {
       sacola.push({ ...produto, quantidade: qtdSelecionada })
-      alert(`${produto.nome} foi adicionado à sua sacola!`)
+      showToast(`"${formatarTituloTexto(produto.nome)}" adicionado à sua sacola!`, 'success');
     }
 
     localStorage.setItem('sacola', JSON.stringify(sacola));
@@ -1534,26 +1539,83 @@ function exibirSacola() {
   const botoesRemover = container.querySelectorAll('.btn-remover');
   botoesRemover.forEach(botao => {
       botao.addEventListener('click', (e) => {
-          const indexRemover = e.target.getAttribute('data-index');
+          const indexRemover = Number(botao.getAttribute('data-index'));
+          const nomeProduto = formatarTituloTexto(sacola[indexRemover]?.nome) || "Produto";         
           sacola.splice(indexRemover, 1);
           localStorage.setItem('sacola', JSON.stringify(sacola));
           exibirSacola();
+          showToast(`"${nomeProduto}" removido da sacola.`, 'error');
       });
   });
 }
+
+function exibirPopupPedidoConcluido() {
+  
+  const overlay = document.createElement("div");
+  
+  overlay.style.cssText = `
+    position: fixed; inset: 0; background: rgba(18, 14, 14, 0.66);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 99999;
+  `;
+
+  overlay.innerHTML = `
+    <div style="
+      background: #fff; border-radius: 18px; padding: 44px 40px;
+      max-width: 420px; width: 90%; text-align: center;
+      box-shadow: 0 24px 50px rgba(0,0,0,0.28);
+    ">
+      <div style="
+        width: 64px; height: 64px; border-radius: 50%;
+        background-color: #e7a9a5; display: flex;
+        align-items: center; justify-content: center;
+        margin: 0 auto 20px; font-size: 32px; color: #fff;
+        ">✔</div>
+      <h2 style="
+        margin: 0 0 14px; font-size: 26px; color: #111;
+        font-family: Arial, Helvetica, sans-serif; font-weight: 800;
+      ">Pedido realizado com sucesso!</h2>
+      <p style="
+        margin: 0 0 28px; color: #555; font-size: 16px;
+        line-height: 1.6; font-family: Arial, Helvetica, sans-serif;
+      ">
+        Seu pedido foi enviado para o WhatsApp.<br>
+        Em breve entraremos em contato para confirmar e finalizar sua compra.
+        Agradeçemos a preferência!
+      </p>
+      <button id="popup-pedido-ok" style="
+        background-color: #cd7f7a; color: #fff; border: none;
+        border-radius: 6px; padding: 14px 40px;
+        font-size: 20px; font-weight: 800; cursor: pointer;
+        font-family: Arial, Helvetica, sans-serif;
+        transition: opacity 0.2s ease;
+      " onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+        OK
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  document.getElementById("popup-pedido-ok").addEventListener("click", () => {
+    overlay.remove();
+    window.location.href = "index.html";
+  });
+}
+
 async function finalizarCompra() {
 
     const token = localStorage.getItem('token');
 
     if (!token) {
-        alert('Você precisa estar logado para finalizar a compra.');
+        showToast('Você precisa estar logado para finalizar a compra.', 'error');
         return;
     }
 
     const sacola = JSON.parse(localStorage.getItem('sacola')) || [];
 
     if (sacola.length === 0) {
-        alert('Sua sacola está vazia.');
+        showToast('Sua sacola está vazia.', 'info');
         return;
     }
 
@@ -1575,19 +1637,19 @@ async function finalizarCompra() {
         const dados = await resposta.json();
 
         if (!resposta.ok) {
-            alert(dados.erro || 'Erro ao finalizar o pedido. Tente novamente.');
+            showToast(dados.erro || 'Erro ao finalizar o pedido. Tente novamente.', 'error');
             return;
         }
 
-        localStorage.removeItem('sacola');
-        window.location.href = dados.link;
+      localStorage.removeItem('sacola');
+      window.open(dados.link, '_blank');
+      exibirPopupPedidoConcluido();
 
     } catch (erro) {
-        alert('Não foi possível conectar ao servidor. Tente novamente.');
+        showToast('Não foi possível conectar ao servidor. Tente novamente.', 'error');
     }
 }
 
-const currentPath = window.location.pathname.toLowerCase();
 const isProductPage = currentPath.endsWith('produtos.html') || currentPath.endsWith('/produtos') || currentPath.endsWith('/produtos/');
 
 document.addEventListener("click", (event) => {
@@ -1617,114 +1679,6 @@ document.addEventListener("click", (event) => {
 
   window.location.assign(destino);
 });
-
-const recuperarForm = document.querySelector("#recuperar-form");
-const recuperarFeedback = document.querySelector("#recuperar-feedback");
-
-if (recuperarForm) {
-  recuperarForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const emailField = document.querySelector("#recuperar-email");
-    const email = emailField ? emailField.value.trim() : "";
-
-    if (!email) {
-      if (recuperarFeedback) {
-        recuperarFeedback.textContent = "Informe seu e-mail para continuar.";
-        recuperarFeedback.className = "login-feedback error";
-      }
-      return;
-    }
-
-    try {
-      const response = await fetch("http://localhost:3000/recuperarSenha", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      const payload = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(payload.erro || "Falha ao enviar o e-mail.");
-      }
-
-      if (recuperarFeedback) {
-        recuperarFeedback.textContent = payload.mensagem || "E-mail enviado com sucesso.";
-        recuperarFeedback.className = "login-feedback success";
-      }
-
-    } catch (error) {
-      if (recuperarFeedback) {
-        recuperarFeedback.textContent = error.message;
-        recuperarFeedback.className = "login-feedback error";
-      }
-    }
-  });
-}
-
-const resetarForm = document.querySelector("#resetar-form");
-const resetarFeedback = document.querySelector("#resetar-feedback");
-
-const params = new URLSearchParams(window.location.search);
-const token = params.get("token");
-
-if (resetarForm) {
-  resetarForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const senhaField = document.querySelector("#nova-senha");
-    const confirmaField = document.querySelector("#confirma-senha");
-
-    const senha = senhaField ? senhaField.value : "";
-    const confirmaSenha = confirmaField ? confirmaField.value : "";
-
-    if (!senha || !confirmaSenha) {
-      if (resetarFeedback) {
-        resetarFeedback.textContent = "Preencha todos os campos.";
-        resetarFeedback.className = "login-feedback error";
-      }
-      return;
-    }
-
-    if (senha !== confirmaSenha) {
-      if (resetarFeedback) {
-        resetarFeedback.textContent = "As senhas precisam ser iguais.";
-        resetarFeedback.className = "login-feedback error";
-      }
-      return;
-    }
-
-    try {
-      const response = await fetch("http://localhost:3000/resetarSenha", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, senha }),
-      });
-
-      const payload = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(payload.erro || "Falha ao redefinir a senha.");
-      }
-
-      if (resetarFeedback) {
-        resetarFeedback.textContent = payload.mensagem || "Senha redefinida com sucesso.";
-        resetarFeedback.className = "login-feedback success";
-      }
-
-      setTimeout(() => {
-        window.location.href = "login.html";
-      }, 2000);
-
-    } catch (error) {
-      if (resetarFeedback) {
-        resetarFeedback.textContent = error.message;
-        resetarFeedback.className = "login-feedback error";
-      }
-    }
-  });
-}
 
 if (isProductPage) {
   inicializarFiltrosProdutos();

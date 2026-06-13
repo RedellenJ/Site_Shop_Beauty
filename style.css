@@ -805,7 +805,7 @@
 .produto-popup-overlay {
   position: fixed;
   inset: 0;
-  z-index: 4000;
+  z-index: 20000;
   background: rgba(18, 14, 14, 0.66);
   display: grid;
   place-items: center;
