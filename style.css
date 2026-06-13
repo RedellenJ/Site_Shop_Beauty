@@ -62,7 +62,7 @@
   margin-left: auto;
   border: 1px solid #333;
   border-radius: 12px;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .action-link {
@@ -73,6 +73,17 @@
   color: #111;
   text-decoration: none;
   cursor: pointer;
+  position: relative;
+}
+
+.action-link:first-child {
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+}
+
+.action-link:last-child {
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 
 .action-link:hover {
@@ -2436,7 +2447,13 @@
 }
 
 .sacola-ajuste {
-  top: 90% !important;
+  position: fixed;
+  left: 50%;
+  top: 58%;
+  transform: translate(-50%, -40%);
+  width: 430px;
+  height: 430px;
+  z-index: 0;
 }
 
 .section-title {
@@ -2486,14 +2503,14 @@ footer {
   z-index: 1;
 }
 
-/* ===================== AUTOCOMPLETAR ===================== */
 .search {
-  overflow: visible; /* sobrescreve o overflow: hidden que cortava a lista */
+  overflow: visible;
 }
 
 .search-wrapper {
   position: relative;
   flex: 1;
+  min-width: 0;
 }
 
 #searchInput {
@@ -2541,7 +2558,6 @@ footer {
   background: #eef3f2;
 }
 
-/* Quando as sugestões estiverem ativas, desabilita apenas os links do menu */
 .menu.menu--disabled a {
   pointer-events: none;
   opacity: 0.65;

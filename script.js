@@ -1487,7 +1487,6 @@ if (isSacolaPage) {
   exibirSacola();
 }
 
-// ===================== AUTOCOMPLETAR =====================
 const searchInput = document.getElementById('searchInput');
 const searchSuggestions = document.getElementById('searchSuggestions');
 
@@ -1512,13 +1511,13 @@ if (searchInput && searchSuggestions) {
     try {
       const res = await fetch(`${apiBaseUrl}/filtroProdutoNome?nome=${encodeURIComponent(q)}`);
       const produtos = await res.json();
-      const comImagem = produtos.filter(p => p.imagem_url);
+      const comImagem = produtos.filter((p) => p.imagem_url);
       renderizarSugestoes(comImagem);
     } catch (err) {
       console.error('Erro na busca:', err);
     }
   }
-  // Tornar a função disponível para chamadas inline (ex: onclick dos botões)
+
   window.buscarSugestoes = buscarSugestoes;
 
   function renderizarSugestoes(produtos) {
@@ -1542,7 +1541,6 @@ if (searchInput && searchSuggestions) {
         window.location.href = `produtos.html?search=${encodeURIComponent(p.nome)}`;
       });
       searchSuggestions.appendChild(li);
-      // permitir navegação por teclado: marcar index no elemento
       li.dataset.suggestionIndex = String(idx);
     });
 
@@ -1551,7 +1549,6 @@ if (searchInput && searchSuggestions) {
     if (menuEl) menuEl.classList.add('menu--disabled');
   }
 
-  // Permitir submeter a busca com a tecla Enter
   searchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -1569,14 +1566,12 @@ if (searchInput && searchSuggestions) {
     if (menuEl) menuEl.classList.remove('menu--disabled');
   }
 
-  // Não fechar quando clicar dentro de `.search` (inclui botão de busca)
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.search')) {
       fecharSugestoes();
     }
   });
 
-  // Navegação por teclado: setas + Enter
   searchInput.addEventListener('keydown', (e) => {
     const items = Array.from(searchSuggestions.querySelectorAll('li'));
     if (!items.length) return;
@@ -1598,13 +1593,11 @@ if (searchInput && searchSuggestions) {
     }
 
     if (e.key === 'Enter') {
-      // se houver sugestão selecionada, seguir para ela
       if (activeSuggestionIndex >= 0 && items[activeSuggestionIndex]) {
         e.preventDefault();
         items[activeSuggestionIndex].click();
         return;
       }
-      // caso contrário, pesquisar o termo atual
       e.preventDefault();
       const q = searchInput.value.trim();
       if (q.length >= 1) {
