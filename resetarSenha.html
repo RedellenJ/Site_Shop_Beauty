@@ -1,20 +1,18 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shop Beauty | Política de Privacidade</title>
+    <title>Shop Beauty | Redefinir Senha</title>
 
     <link rel="icon" type="image/png" href="Img/Logos/Logo3.png" />
-
     <link rel="stylesheet" href="style.css" />
-
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
   </head>
-  <body>
+  <body class="login-page reset-page">
     <div class="top-bar"></div>
 
     <header class="header">
@@ -70,81 +68,98 @@
         <li><a href="contato.html">CONTATO</a></li>
         <li><a href="trocas-devolucoes.html">TROCAS OU DEVOLUÇÕES</a></li>
         <li>
-          <a class="active" href="politica-de-privacidade.html">POLÍTICA DE PRIVACIDADE</a>
+          <a href="politica-de-privacidade.html">POLÍTICA DE PRIVACIDADE</a>
         </li>
         <li><a href="quem-somos.html">QUEM SOMOS</a></li>
       </ul>
     </nav>
 
-    <div class="breadcrumb">
+    <div class="breadcrumb breadcrumb-auth">
       <span>Você está em:</span>
       <a class="breadcrumb-home" href="index.html">INÍCIO</a>
       <span class="separator">&gt;</span>
-      <span class="breadcrumb-current">POLÍTICA DE PRIVACIDADE</span>
+      <a class="breadcrumb-account" href="login.html">MINHA CONTA</a>
+      <span class="separator">&gt;</span>
+      <span class="breadcrumb-current">REDEFINIR SENHA</span>
     </div>
 
-    <section class="policy-hero">
-      <img class="policy-bg" src="Img/Logos/Logo3.png" alt="Logo de fundo" />
-      <div class="policy-content">
-        <h1>POLÍTICA DE PRIVACIDADE</h1>
+    <main class="login-main">
+      <section class="login-hero">
+        <div class="login-column login-form-box">
+          <h1>REDEFINIR SENHA</h1>
 
-        <h3>Coleta de dados</h3>
-        <p>
-          A Shop Beauty coleta apenas os dados necessários para a realização de
-          compras e atendimento ao cliente, como nome, e-mail, telefone e
-          endereço de entrega. Essas informações são fornecidas diretamente por
-          você ao realizar um cadastro ou entrar em contato conosco.
-        </p>
+          <form
+            id="reset-form"
+            class="login-form"
+            data-reset-endpoint="http://localhost:3000/resetarSenha"
+          >
+            <label for="reset-password">Nova senha</label>
+            <div class="password-field">
+              <input
+                id="reset-password"
+                name="password"
+                type="password"
+                placeholder="ex.: suasenha"
+                autocomplete="new-password"
+                minlength="6"
+                required
+              />
+              <button
+                class="password-toggle"
+                data-target="reset-password"
+                type="button"
+                aria-label="Mostrar ou ocultar nova senha"
+                title="Mostrar ou ocultar nova senha"
+              >
+                <i class="fas fa-eye-slash" aria-hidden="true"></i>
+              </button>
+            </div>
 
-        <h3>Uso das informações</h3>
-        <p>
-          Seus dados são utilizados exclusivamente para processar pedidos,
-          enviar atualizações sobre compras e melhorar sua experiência em nosso
-          site. Não compartilhamos suas informações pessoais com terceiros,
-          exceto quando necessário para a entrega do produto (transportadoras)
-          ou exigido por lei.
-        </p>
+            <label for="reset-password-confirm">Confirme a nova senha</label>
+            <div class="password-field">
+              <input
+                id="reset-password-confirm"
+                name="passwordConfirm"
+                type="password"
+                autocomplete="new-password"
+                minlength="6"
+                required
+              />
+              <button
+                class="password-toggle"
+                data-target="reset-password-confirm"
+                type="button"
+                aria-label="Mostrar ou ocultar confirmacao da nova senha"
+                title="Mostrar ou ocultar confirmacao da nova senha"
+              >
+                <i class="fas fa-eye-slash" aria-hidden="true"></i>
+              </button>
+            </div>
 
-        <h3>Armazenamento e segurança</h3>
-        <p>
-          Adotamos medidas técnicas e organizacionais adequadas para proteger
-          suas informações contra acessos não autorizados, perda ou divulgação
-          indevida. Seus dados são armazenados de forma segura e pelo tempo
-          necessário para cumprir as finalidades descritas nesta política.
-        </p>
+            <p class="register-text reset-note">
+              Use o mesmo e-mail onde recebeu o link para recuperar a senha.
+            </p>
 
-        <h3>Cookies</h3>
-        <p>
-          Nosso site pode utilizar cookies para melhorar a navegação e
-          personalizar sua experiência. Você pode desativar os cookies nas
-          configurações do seu navegador, mas isso pode afetar o funcionamento
-          de algumas funcionalidades do site.
-        </p>
+            <button class="login-submit" type="submit">SALVAR NOVA SENHA</button>
 
-        <h3>Seus direitos</h3>
-        <p>
-          Você tem direito a acessar, corrigir ou solicitar a exclusão dos seus
-          dados pessoais a qualquer momento. Para exercer esses direitos, entre
-          em contato conosco pelo WhatsApp (35) 98469-3046 ou pelo e-mail
-          marinavanoniap@gmail.com.
-        </p>
+            <p class="register-text">
+              Quer voltar agora?
+              <a href="login.html">Ir para login</a>
+            </p>
 
-        <h3>Alterações nesta política</h3>
-        <p>
-          A Shop Beauty reserva-se o direito de atualizar esta política de
-          privacidade periodicamente. Recomendamos que você a revise
-          regularmente. O uso continuado do site após qualquer alteração
-          constitui aceitação das mudanças.
-        </p>
+            <p
+              id="reset-feedback"
+              class="login-feedback"
+              aria-live="polite"
+            ></p>
+          </form>
+        </div>
 
-        <h3>Contato</h3>
-        <p>
-          Em caso de dúvidas sobre esta política, entre em contato pelo WhatsApp
-          (35) 98469-3046 ou pelo e-mail marinavanoniap@gmail.com. Estamos à
-          disposição para ajudar.
-        </p>
-      </div>
-    </section>
+        <div class="login-column login-brand-box">
+          <img src="Img/Logos/Logo1.png" alt="Shop Beauty" />
+        </div>
+      </section>
+    </main>
 
     <footer class="footer">
       <div class="footer-content">
@@ -218,8 +233,3 @@
     </script>
   </body>
 </html>
-
-
-
-
-

@@ -77,12 +77,174 @@ const contactForm = document.querySelector(".contact-form");
 const phoneField = document.querySelector("#telefone");
 const loginForm = document.querySelector("#login-form");
 const loginFeedback = document.querySelector("#login-feedback");
+const forgotForm = document.querySelector("#forgot-form");
+const forgotFeedback = document.querySelector("#forgot-feedback");
+const resetForm = document.querySelector("#reset-form");
+const resetFeedback = document.querySelector("#reset-feedback");
 const registerForm = document.querySelector("#register-form");
 const registerPhoneField = document.querySelector("#register-phone");
 const registerFeedback = document.querySelector("#register-feedback");
 const passwordToggleButtons = document.querySelectorAll(
   ".password-toggle[data-target]",
 );
+const actionAccount = document.querySelector(".action-account");
+const actionAccountText = actionAccount ? actionAccount.querySelector("span") : null;
+const defaultAccountHtml = actionAccountText ? actionAccountText.innerHTML : "";
+const productsGrid = document.querySelector("#produtos-grid");
+const productsStatus = document.querySelector("#produtos-status");
+const filtroCategoria = document.querySelector("#filtro-categoria");
+const filtroMarca = document.querySelector("#filtro-marca");
+const ordenarPor = document.querySelector("#ordenar-por");
+const limparFiltrosButton = document.querySelector("#limpar-filtros");
+const productSearchInput = document.querySelector("#productSearch");
+const filtroTamanhoCheckboxes = document.querySelectorAll(".filtro-tamanho");
+const filtroPrecoMin = document.querySelector("#preco-min");
+const filtroPrecoMax = document.querySelector("#preco-max");
+const breadcrumbCategoria = document.querySelector("#breadcrumb-categoria");
+const breadcrumbCategoriaSeparator = document.querySelector("#breadcrumb-categoria-separator");
+
+if (productSearchInput) {
+  productSearchInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      carregarProdutosPorNome(productSearchInput.value);
+    }
+  });
+}
+const productCategoryLinks = document.querySelectorAll(".products-dropdown a");
+const mainProductsMenuLink = document.querySelector('.menu-item-has-dropdown > a[href*="produtos"]');
+const catalogHeading = document.querySelector("#catalog-heading");
+
+const productsState = {
+  todos: [],
+  termoBusca: "",
+  categoria: "",
+  marca: "",
+  ordenacao: "nome-az",
+  tamanhos: [],
+  precoMin: "",
+  precoMax: "",
+};
+
+const apiBaseUrl = "http://localhost:3000";
+
+const categoriaAliases = {
+  "extensao-cilios": ["extensaocilios", "extensaodecilios", "cilios"],
+  perfumes: ["perfumes", "perfume", "fragrancia", "fragrancias"],
+  sobrancelha: ["sobrancelha", "sobrancelhas", "brow", "brows"],
+  maquiagens: ["maquiagem", "maquiagens", "make", "makeup"],
+  hidratantes: ["hidratante", "hidratantes", "hidratacao"],
+  cabelos: ["cabelo", "cabelos", "hair"],
+  skincare: ["skincare", "skincares", "cuidadodapele", "cuidadopele", "skin", "care"],
+};
+
+function obterPayloadToken(token) {
+  if (!token) {
+    return null;
+  }
+
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) {
+      return null;
+    }
+
+    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const decoded = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((char) => `%${`00${char.charCodeAt(0).toString(16)}`.slice(-2)}`)
+        .join(""),
+    );
+
+    return JSON.parse(decoded);
+  } catch {
+    return null;
+  }
+}
+
+function formatarNomeUsuario(valor) {
+  const texto = (valor || "").trim();
+  if (!texto) {
+    return "";
+  }
+
+  return texto
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((parte) => parte.charAt(0).toUpperCase() + parte.slice(1))
+    .join(" ");
+}
+
+function obterNomeUsuarioLogado() {
+  const nomeSalvo = formatarNomeUsuario(localStorage.getItem("userName"));
+  if (nomeSalvo) {
+    return nomeSalvo;
+  }
+
+  const token = localStorage.getItem("token");
+  const payload = obterPayloadToken(token);
+  const emailToken = (payload && payload.email ? payload.email : "").trim();
+  if (!emailToken) {
+    return "";
+  }
+
+  const nomePorEmail = emailToken.split("@")[0] || "";
+  return formatarNomeUsuario(nomePorEmail);
+}
+
+function atualizarAreaConta() {
+  if (!actionAccount || !actionAccountText) {
+    return;
+  }
+
+  const token = localStorage.getItem("token");
+  const dropdownExistente = actionAccount.querySelector(".account-dropdown");
+
+  if (!token) {
+    actionAccount.classList.remove("logged-in");
+    actionAccountText.classList.remove("account-user-name");
+    actionAccountText.innerHTML = defaultAccountHtml;
+    if (dropdownExistente) {
+      dropdownExistente.remove();
+    }
+    return;
+  }
+
+  const nomeUsuario = formatarNomeUsuario(obterNomeUsuarioLogado()) || "Minha Conta";
+  localStorage.setItem("userName", nomeUsuario);
+
+  actionAccount.classList.add("logged-in");
+  actionAccountText.classList.add("account-user-name");
+  actionAccountText.textContent = nomeUsuario;
+
+  const dropdown = dropdownExistente || document.createElement("div");
+  dropdown.className = "account-dropdown";
+
+  let logoutButton = dropdown.querySelector(".account-logout");
+  if (!logoutButton) {
+    logoutButton = document.createElement("button");
+    logoutButton.type = "button";
+    logoutButton.className = "account-logout";
+    logoutButton.textContent = "Deslogar";
+    dropdown.appendChild(logoutButton);
+  }
+
+  logoutButton.onclick = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("sacola");
+    atualizarAreaConta();
+    window.location.href = "index.html";
+  };
+
+  if (!dropdownExistente) {
+    actionAccount.appendChild(dropdown);
+  }
+}
+
+atualizarAreaConta();
 
 function sanitizePhoneDigits(value) {
   return value.replace(/\D/g, "").slice(0, 11);
@@ -225,6 +387,13 @@ if (loginForm) {
       }
 
       localStorage.setItem('token', payload.token)
+      if (payload.nome) {
+        localStorage.setItem("userName", formatarNomeUsuario(payload.nome));
+      } else if (payload.email) {
+        localStorage.setItem("userName", formatarNomeUsuario(payload.email.split("@")[0] || "Minha Conta"));
+      }
+      atualizarAreaConta();
+      window.location.href = "index.html";
 
     } catch (error) {
       if (loginFeedback) {
@@ -233,6 +402,174 @@ if (loginForm) {
             ? error.message
             : "Não foi possível concluir o login agora.";
         loginFeedback.className = "login-feedback error";
+      }
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
+    }
+  });
+}
+
+if (forgotForm) {
+  forgotForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const emailField = document.querySelector("#forgot-email");
+    const submitButton = forgotForm.querySelector(".login-submit");
+    const email = emailField ? emailField.value.trim() : "";
+
+    if (!email) {
+      if (forgotFeedback) {
+        forgotFeedback.textContent = "Informe o e-mail para recuperar sua senha.";
+        forgotFeedback.className = "login-feedback error";
+      }
+      return;
+    }
+
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+
+    if (forgotFeedback) {
+      forgotFeedback.textContent = "Enviando link de recuperação...";
+      forgotFeedback.className = "login-feedback";
+    }
+
+    const endpoint =
+      forgotForm.getAttribute("data-forgot-endpoint") ||
+      "http://localhost:3000/recuperarSenha";
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          payload.erro || payload.mensagem || "Falha ao enviar e-mail de recuperação.",
+        );
+      }
+
+      if (forgotFeedback) {
+        forgotFeedback.textContent =
+          payload.mensagem || "Enviamos o link de recuperação para o seu e-mail.";
+        forgotFeedback.className = "login-feedback success";
+      }
+      forgotForm.reset();
+    } catch (error) {
+      if (forgotFeedback) {
+        forgotFeedback.textContent =
+          error instanceof Error
+            ? error.message
+            : "Não foi possível enviar o e-mail de recuperação agora.";
+        forgotFeedback.className = "login-feedback error";
+      }
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
+    }
+  });
+}
+
+if (resetForm) {
+  resetForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const passwordField = document.querySelector("#reset-password");
+    const confirmPasswordField = document.querySelector("#reset-password-confirm");
+    const submitButton = resetForm.querySelector(".login-submit");
+
+    const senha = passwordField ? passwordField.value : "";
+    const confirmaSenha = confirmPasswordField ? confirmPasswordField.value : "";
+    const token = new URLSearchParams(window.location.search).get("token") || "";
+
+    if (!token) {
+      if (resetFeedback) {
+        resetFeedback.textContent = "Link inválido ou expirado. Solicite uma nova recuperação de senha.";
+        resetFeedback.className = "login-feedback error";
+      }
+      return;
+    }
+
+    if (!senha || !confirmaSenha) {
+      if (resetFeedback) {
+        resetFeedback.textContent = "Preencha os dois campos de senha.";
+        resetFeedback.className = "login-feedback error";
+      }
+      return;
+    }
+
+    if (senha.length < 6) {
+      if (resetFeedback) {
+        resetFeedback.textContent = "A nova senha deve ter no minimo 6 caracteres.";
+        resetFeedback.className = "login-feedback error";
+      }
+      return;
+    }
+
+    if (senha !== confirmaSenha) {
+      if (resetFeedback) {
+        resetFeedback.textContent = "As senhas precisam ser iguais.";
+        resetFeedback.className = "login-feedback error";
+      }
+      return;
+    }
+
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+
+    if (resetFeedback) {
+      resetFeedback.textContent = "Redefinindo sua senha...";
+      resetFeedback.className = "login-feedback";
+    }
+
+    const endpoint =
+      resetForm.getAttribute("data-reset-endpoint") ||
+      "http://localhost:3000/resetarSenha";
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ senha, token }),
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          payload.erro || payload.mensagem || "Falha ao redefinir senha.",
+        );
+      }
+
+      if (resetFeedback) {
+        resetFeedback.textContent =
+          payload.mensagem || "Senha redefinida com sucesso!";
+        resetFeedback.className = "login-feedback success";
+      }
+
+      resetForm.reset();
+      window.setTimeout(() => {
+        window.location.href = "login.html";
+      }, 1400);
+    } catch (error) {
+      if (resetFeedback) {
+        resetFeedback.textContent =
+          error instanceof Error
+            ? error.message
+            : "Nao foi possivel redefinir sua senha agora.";
+        resetFeedback.className = "login-feedback error";
       }
     } finally {
       if (submitButton) {
@@ -336,11 +673,7 @@ if (registerForm) {
         );
       }
 
-      if (registerFeedback) {
-        registerFeedback.textContent =
-          payload.mensagem || "Conta criada com sucesso.";
-        registerFeedback.className = "login-feedback success";
-      }
+      window.location.href = "login.html";
 
     } catch (error) {
       if (registerFeedback) {
@@ -361,52 +694,490 @@ if (registerForm) {
 // CONEXÕES COM O BACKEND!
 
 async function carregarProdutos() {
-    
-    try {
-        const resposta = await fetch('http://localhost:3000/produtos');
-        const produtos = await resposta.json();
-        
-        const container = document.querySelector('.page-content');
-        if (!container) {
-            return;
-        }
+    if (!productsGrid) {
+      return;
+    }
 
-        container.innerHTML = '<h1 class="page-title">Produtos</h1><div class="produtos-grid" style="display: flex; flex-wrap: wrap; gap: 20px;"></div>';
-        
-        const grid = document.querySelector('.produtos-grid');
-        
-        produtos.forEach(produto => {
-            const card = document.createElement('div');
-            card.style.border = "1px solid #ccc";
-            card.style.padding = "15px";
-            card.style.width = "250px";
-            card.style.textAlign = "center";
-            card.style.display = "flex";
-            card.style.flexDirection = "column";
-            card.style.justifyContent = "between";
-            
-            const imagem = produto.imagem_url ? produto.imagem_url : 'https://via.placeholder.com/150?text=Sem+Imagem';
-            
-            card.innerHTML = 
-                `<img src="${imagem}" alt="${produto.nome}" style="width: 100%; height: auto; max-width: 150px; margin: 0 auto;">
-                <h3 style="font-size: 16px; margin: 10px 0;">${produto.nome}</h3>
-                <p style="color: #666; font-size: 14px;">${produto.marca}</p>
-                <p style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">R$ ${parseFloat(produto.preco).toFixed(2)}</p>
-                <button class="btn-adicionar" style="background-color: #000; color: #fff; border: none; padding: 10px; cursor: pointer; font-weight: bold; margin-top: auto;">Adicionar à Sacola</button>`;
-            
-            const botao = card.querySelector('.btn-adicionar');
-            botao.addEventListener('click', () => adicionarAoSacola(produto));
-            
-            grid.appendChild(card);
-        });
-        
+    if (productsStatus) {
+      productsStatus.textContent = "Carregando produtos...";
+    }
+
+    try {
+      const resposta = await fetch(`${apiBaseUrl}/produtos`);
+      const produtos = await resposta.json();
+
+      productsState.todos = Array.isArray(produtos) ? produtos : [];
+      preencherMarcas(productsState.todos);
+      preencherFaixasDePreco(productsState.todos);
+      aplicarFiltrosEOrdenacao();
     } catch (erro) {
-        console.error(erro);
+      if (productsStatus) {
+        productsStatus.textContent = "Não foi possível carregar os produtos agora.";
+      }
+      productsGrid.innerHTML = '<div class="sem-produtos">Não foi possível carregar os produtos agora.</div>';
+      console.error(erro);
     }
 }
 
+async function carregarProdutosPorNome(nome) {
+    productsState.termoBusca = (nome || "").trim();
+
+    if (productSearchInput && productSearchInput.value !== productsState.termoBusca) {
+      productSearchInput.value = productsState.termoBusca;
+    }
+
+    if (!isProductPage) {
+      const query = productsState.termoBusca
+        ? `?search=${encodeURIComponent(productsState.termoBusca)}`
+        : "";
+      const destino = `produtos.html${query}`;
+      window.location.assign(destino);
+      return;
+    }
+
+    aplicarFiltrosEOrdenacao();
+}
+
+function normalizarTexto(valor) {
+  return (valor || "")
+    .toString()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function preencherMarcas(produtos) {
+  if (!filtroMarca) {
+    return;
+  }
+
+  const marcasUnicas = [...new Set(produtos
+    .map((produto) => (produto.marca || "").trim())
+    .filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+  const marcaSelecionada = productsState.marca;
+  filtroMarca.innerHTML = '<option value="">Todas as marcas</option>';
+
+  marcasUnicas.forEach((marca) => {
+    const option = document.createElement("option");
+    option.value = marca;
+    option.textContent = formatarTituloTexto(marca) || marca;
+    filtroMarca.appendChild(option);
+  });
+
+  filtroMarca.value = marcaSelecionada;
+}
+
+function preencherFaixasDePreco(produtos) {
+  if (!filtroPrecoMin || !filtroPrecoMax) {
+    return;
+  }
+
+  const precos = produtos
+    .map((produto) => Number(produto.preco))
+    .filter((preco) => Number.isFinite(preco))
+    .sort((a, b) => a - b);
+
+  if (precos.length === 0) {
+    return;
+  }
+
+  if (!productsState.precoMin) {
+    filtroPrecoMin.placeholder = formatarPreco(precos[0]);
+  }
+
+  if (!productsState.precoMax) {
+    filtroPrecoMax.placeholder = formatarPreco(precos[precos.length - 1]);
+  }
+}
+
+function parseValorPreco(valor) {
+  const texto = (valor || "").toString().trim();
+  if (!texto) {
+    return null;
+  }
+
+  const normalizado = texto
+    .replace(/\s/g, "")
+    .replace(/R\$/gi, "")
+    .replace(/\./g, "")
+    .replace(",", ".")
+    .replace(/[^0-9.]/g, "");
+
+  if (!normalizado) {
+    return null;
+  }
+
+  const numero = Number(normalizado);
+  return Number.isFinite(numero) ? numero : null;
+}
+
+function extrairTamanhoMl(produto) {
+  const texto = `${produto?.nome || ""} ${produto?.descricao || ""}`;
+  const match = texto.match(/(\d{2,3})\s*ml/i);
+  return match ? Number(match[1]) : null;
+}
+
+function atualizarBreadcrumbCategoria() {
+  if (!breadcrumbCategoria) {
+    return;
+  }
+
+  if (!productsState.categoria) {
+    breadcrumbCategoria.textContent = "";
+    breadcrumbCategoria.hidden = true;
+    if (breadcrumbCategoriaSeparator) {
+      breadcrumbCategoriaSeparator.hidden = true;
+    }
+    return;
+  }
+
+  const formatado = productsState.categoria
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (letra) => letra.toUpperCase());
+  breadcrumbCategoria.textContent = formatado;
+  breadcrumbCategoria.hidden = false;
+  if (breadcrumbCategoriaSeparator) {
+    breadcrumbCategoriaSeparator.hidden = false;
+  }
+}
+
+function obterTextoCategoria(categoria) {
+  if (!categoria) {
+    return "Produtos";
+  }
+
+  if (filtroCategoria) {
+    const opcao = [...filtroCategoria.options].find((item) => item.value === categoria);
+    if (opcao && opcao.textContent) {
+      return opcao.textContent;
+    }
+  }
+
+  return categoria
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (letra) => letra.toUpperCase());
+}
+
+function atualizarTituloCatalogo() {
+  if (!catalogHeading) {
+    return;
+  }
+
+  catalogHeading.textContent = obterTextoCategoria(productsState.categoria);
+}
+
+function categoriaCompativel(categoriaProduto, categoriaFiltro) {
+  const produtoNormalizado = normalizarTexto(categoriaProduto);
+  const filtroNormalizado = normalizarTexto(categoriaFiltro);
+  const aliases = categoriaAliases[categoriaFiltro] || [filtroNormalizado];
+
+  if (!filtroNormalizado) {
+    return true;
+  }
+
+  if (!produtoNormalizado) {
+    return false;
+  }
+
+  return aliases.some((alias) => {
+    const aliasNormalizado = normalizarTexto(alias);
+    return (
+      produtoNormalizado === aliasNormalizado
+      || produtoNormalizado.includes(aliasNormalizado)
+    );
+  });
+}
+
+function aplicarFiltrosEOrdenacao() {
+  if (!productsGrid) {
+    return;
+  }
+
+  let produtosFiltrados = [...productsState.todos];
+
+  if (productsState.termoBusca) {
+    const termo = normalizarTexto(productsState.termoBusca);
+    produtosFiltrados = produtosFiltrados.filter((produto) => {
+      const nome = normalizarTexto(produto.nome);
+      const marca = normalizarTexto(produto.marca);
+      const categoria = normalizarTexto(produto.categoria);
+      return nome.includes(termo) || marca.includes(termo) || categoria.includes(termo);
+    });
+  }
+
+  if (productsState.categoria) {
+    produtosFiltrados = produtosFiltrados.filter((produto) => categoriaCompativel(produto.categoria, productsState.categoria));
+  }
+
+  if (productsState.marca) {
+    const marcaSelecionada = normalizarTexto(productsState.marca);
+    produtosFiltrados = produtosFiltrados.filter((produto) => normalizarTexto(produto.marca) === marcaSelecionada);
+  }
+
+  if (productsState.tamanhos.length > 0) {
+    produtosFiltrados = produtosFiltrados.filter((produto) => {
+      const tamanho = extrairTamanhoMl(produto);
+      return tamanho && productsState.tamanhos.includes(tamanho);
+    });
+  }
+
+  const precoMinimo = parseValorPreco(productsState.precoMin);
+  if (precoMinimo !== null) {
+    produtosFiltrados = produtosFiltrados.filter((produto) => Number(produto.preco) >= precoMinimo);
+  }
+
+  const precoMaximo = parseValorPreco(productsState.precoMax);
+  if (precoMaximo !== null) {
+    produtosFiltrados = produtosFiltrados.filter((produto) => Number(produto.preco) <= precoMaximo);
+  }
+
+  if (productsState.ordenacao === "preco-menor") {
+    produtosFiltrados.sort((a, b) => Number(a.preco) - Number(b.preco));
+  }
+
+  if (productsState.ordenacao === "preco-maior") {
+    produtosFiltrados.sort((a, b) => Number(b.preco) - Number(a.preco));
+  }
+
+  if (productsState.ordenacao === "nome-az") {
+    produtosFiltrados.sort((a, b) => (a.nome || "").localeCompare(b.nome || "", "pt-BR"));
+  }
+
+  if (productsState.ordenacao === "nome-za") {
+    produtosFiltrados.sort((a, b) => (b.nome || "").localeCompare(a.nome || "", "pt-BR"));
+  }
+
+  renderizarProdutos(produtosFiltrados);
+}
+
+function formatarPreco(valor) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(Number(valor || 0));
+}
+
+function formatarTituloTexto(valor) {
+  const texto = (valor || "").toString().trim().toLowerCase();
+  if (!texto) {
+    return "";
+  }
+
+  return texto.replace(/(^|\s|[-/])(\p{L})/gu, (match, separador, letra) => `${separador}${letra.toUpperCase()}`);
+}
+
+function renderizarProdutos(produtos) {
+  if (!productsGrid) {
+    return;
+  }
+
+  productsGrid.innerHTML = "";
+
+  if (productsStatus) {
+    productsStatus.textContent = `${produtos.length} produto(s) encontrado(s)`;
+  }
+
+  if (produtos.length === 0) {
+    productsGrid.innerHTML = '<div class="sem-produtos">Nenhum produto encontrado com os filtros selecionados.</div>';
+    return;
+  }
+
+  produtos.forEach((produto) => {
+    const card = document.createElement("article");
+    card.className = "produto-card";
+
+    const imagem = produto.imagem_url || "https://via.placeholder.com/150?text=Sem+Imagem";
+    const precoProduto = Number(produto.preco || 0);
+    const parcelado = precoProduto / 3;
+    const precoPix = precoProduto * 0.93;
+    const tamanho = extrairTamanhoMl(produto);
+    const nomeFormatado = formatarTituloTexto(produto.nome) || "Produto";
+    const marcaFormatada = formatarTituloTexto(produto.marca) || "Sem marca";
+    const nomeComTamanho = tamanho ? `${nomeFormatado} (${tamanho}ml)` : nomeFormatado;
+
+    card.innerHTML = `
+      <div class="produto-imagem-box">
+        <img src="${imagem}" alt="${produto.nome}" class="produto-imagem">
+      </div>
+      <h3 class="produto-nome">${nomeComTamanho}</h3>
+      <p class="produto-marca">${marcaFormatada}</p>
+      <p class="produto-preco">${formatarPreco(precoProduto)}</p>
+      <p class="produto-parcelado">3x de ${formatarPreco(parcelado)}</p>
+      <p class="produto-pix">${formatarPreco(precoPix)} no PIX</p>
+      <button class="btn-adicionar" type="button">COMPRAR</button>
+    `;
+
+    const botao = card.querySelector(".btn-adicionar");
+    botao.addEventListener("click", () => adicionarAoSacola(produto));
+
+    productsGrid.appendChild(card);
+  });
+}
+
+function obterCategoriaDaUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const categoriaQuery = params.get("categoria") || "";
+  if (categoriaQuery) {
+    return categoriaQuery;
+  }
+
+  const categoriaStorage = sessionStorage.getItem("shopBeautyCategoria");
+  return categoriaStorage || "";
+}
+
+function obterTermoBuscaDaUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("search") || "";
+}
+
+function setCategoriaSelecionada(categoria) {
+  productsState.categoria = categoria || "";
+
+  if (filtroCategoria) {
+    filtroCategoria.value = productsState.categoria;
+  }
+
+  atualizarBreadcrumbCategoria();
+  atualizarTituloCatalogo();
+  aplicarFiltrosEOrdenacao();
+}
+
+function limparFiltrosProdutos() {
+  productsState.termoBusca = "";
+  productsState.categoria = "";
+  productsState.marca = "";
+  productsState.ordenacao = "nome-az";
+  productsState.tamanhos = [];
+  productsState.precoMin = "";
+  productsState.precoMax = "";
+
+  if (productSearchInput) {
+    productSearchInput.value = "";
+  }
+
+  if (filtroCategoria) {
+    filtroCategoria.value = "";
+  }
+
+  if (filtroMarca) {
+    filtroMarca.value = "";
+  }
+
+  if (ordenarPor) {
+    ordenarPor.value = "nome-az";
+  }
+
+  if (filtroTamanhoCheckboxes.length > 0) {
+    filtroTamanhoCheckboxes.forEach((checkbox) => {
+      checkbox.checked = false;
+    });
+  }
+
+  if (filtroPrecoMin) {
+    filtroPrecoMin.value = "";
+  }
+
+  if (filtroPrecoMax) {
+    filtroPrecoMax.value = "";
+  }
+
+  sessionStorage.removeItem("shopBeautyCategoria");
+  history.replaceState({}, "", window.location.pathname);
+  atualizarBreadcrumbCategoria();
+  atualizarTituloCatalogo();
+  aplicarFiltrosEOrdenacao();
+}
+
+function inicializarFiltrosProdutos() {
+  if (!productsGrid) {
+    return;
+  }
+
+  const categoriaUrl = obterCategoriaDaUrl();
+  if (categoriaUrl) {
+    productsState.categoria = categoriaUrl;
+  }
+
+  const termoBuscaUrl = obterTermoBuscaDaUrl();
+  if (termoBuscaUrl) {
+    productsState.termoBusca = termoBuscaUrl.trim();
+    if (productSearchInput) {
+      productSearchInput.value = productsState.termoBusca;
+    }
+  }
+
+  sessionStorage.removeItem("shopBeautyCategoria");
+  atualizarBreadcrumbCategoria();
+  atualizarTituloCatalogo();
+
+  if (filtroCategoria) {
+    filtroCategoria.value = productsState.categoria;
+    filtroCategoria.addEventListener("change", (event) => {
+      productsState.categoria = event.target.value;
+      atualizarBreadcrumbCategoria();
+      atualizarTituloCatalogo();
+      aplicarFiltrosEOrdenacao();
+    });
+  }
+
+  if (filtroMarca) {
+    filtroMarca.addEventListener("change", (event) => {
+      productsState.marca = event.target.value;
+      aplicarFiltrosEOrdenacao();
+    });
+  }
+
+  if (ordenarPor) {
+    ordenarPor.addEventListener("change", (event) => {
+      productsState.ordenacao = event.target.value;
+      aplicarFiltrosEOrdenacao();
+    });
+  }
+
+  if (limparFiltrosButton) {
+    limparFiltrosButton.addEventListener("click", () => {
+      limparFiltrosProdutos();
+    });
+  }
+
+  if (mainProductsMenuLink) {
+    mainProductsMenuLink.addEventListener("click", (event) => {
+      event.preventDefault();
+      limparFiltrosProdutos();
+    });
+  }
+
+  if (filtroTamanhoCheckboxes.length > 0) {
+    filtroTamanhoCheckboxes.forEach((checkbox) => {
+      checkbox.addEventListener("change", () => {
+        productsState.tamanhos = [...filtroTamanhoCheckboxes]
+          .filter((item) => item.checked)
+          .map((item) => Number(item.value));
+        aplicarFiltrosEOrdenacao();
+      });
+    });
+  }
+
+  if (filtroPrecoMin) {
+    filtroPrecoMin.addEventListener("input", (event) => {
+      productsState.precoMin = event.target.value;
+      aplicarFiltrosEOrdenacao();
+    });
+  }
+
+  if (filtroPrecoMax) {
+    filtroPrecoMax.addEventListener("input", (event) => {
+      productsState.precoMax = event.target.value;
+      aplicarFiltrosEOrdenacao();
+    });
+  }
+
+}
+
 function adicionarAoSacola(produto) {
-    
+
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -414,11 +1185,11 @@ function adicionarAoSacola(produto) {
         window.location.href = 'login.html';
         return;
     }
-  
+
     let sacola = JSON.parse(localStorage.getItem('sacola')) || [];
-    
+
     const index = sacola.findIndex(item => item.id === produto.id)
-    
+
     if (index >= 0) {
       sacola[index].quantidade += 1
       alert(`Quantidade de ${produto.nome} foi atualizada para ${sacola[index].quantidade}!`)
@@ -426,92 +1197,102 @@ function adicionarAoSacola(produto) {
       sacola.push({ ...produto, quantidade: 1 })
       alert(`${produto.nome} foi adicionado à sua sacola!`)
     }
-    
+
     localStorage.setItem('sacola', JSON.stringify(sacola));
-}    
-
-function exibirSacola() {
-    
-    const token = localStorage.getItem('token');
-    const sacola = JSON.parse(localStorage.getItem('sacola')) || [];
-    const container = document.querySelector('.page-content');
-
-    if (!token) {
-        container.innerHTML = 
-            `<h1 class="page-title">Sua Sacola</h1>
-            <p style="text-align: center; margin-top: 20px;">
-                Você precisa estar logado para ver sua sacola.
-            </p>`;
-        return;
-    }
-
-    if (sacola.length === 0) {
-        container.innerHTML = 
-            `<h1 class="page-title">Sua Sacola</h1>
-            <p style="text-align: center; margin-top: 20px;">Sua sacola está vazia. Volte para a página de produtos!</p>`;
-        return;
-    }
-
-    container.innerHTML = 
-        `<h1 class="page-title">Sua Sacola</h1>
-        <div class="sacola-wrapper" style="display: flex; flex-direction: column; gap: 20px; max-width: 600px; margin: 0 auto;">
-            <div class="itens-sacola"></div>
-            <div class="resumo-sacola" style="border-top: 2px solid #000; padding-top: 15px; text-align: right;">
-                <h3 id="total-sacola" style="font-size: 20px; font-weight: bold;">Total: R$ 0.00</h3>
-                <button id="btn-limpar" style="background-color: #ff4d4d; color: #fff; border: none; padding: 10px; cursor: pointer; margin-right: 10px;">Limpar Sacola</button>
-                <button id="btn-finalizar" style="background-color: #000; color: #fff; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold;">Finalizar Compra</button>
-            </div>
-        </div>`;
-
-    const listaItens = container.querySelector('.itens-sacola');
-    let valorTotal = 0;
-
-    sacola.forEach((produto, index) => {
-        const itemRow = document.createElement('div');
-        itemRow.style.display = 'flex';
-        itemRow.style.alignItems = 'center';
-        itemRow.style.justifyContent = 'space-between';
-        itemRow.style.borderBottom = '1px solid #eee';
-        itemRow.style.padding = '10px 0';
-
-        const imagem = produto.imagem_url ? produto.imagem_url : 'https://via.placeholder.com/50?text=Sem+Imagem';
-        
-        itemRow.innerHTML = 
-            `<img src="${imagem}" alt="${produto.nome}" style="width: 50px; height: auto;">
-            <div style="flex-grow: 1; margin-left: 15px; text-align: left;">
-                <h4 style="margin: 0; font-size: 16px;">${produto.nome}</h4>
-                <p style="margin: 0; color: #666; font-size: 12px;">${produto.marca}</p>
-            </div>
-            <p style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">R$ ${parseFloat(produto.preco).toFixed(2)}</p>
-            <button class="btn-remover" data-index="${index}" style="background: none; border: none; color: red; cursor: pointer; font-weight: bold;">X</button>`;
-
-        listaItens.appendChild(itemRow);
-        
-        valorTotal += parseFloat(produto.preco) * produto.quantidade;
-    });
-
-    container.querySelector('#total-sacola').innerText = `Total: R$ ${valorTotal.toFixed(2)}`;
-
-    container.querySelector('#btn-limpar').addEventListener('click', () => {
-        localStorage.removeItem('sacola');
-        exibirSacola();
-    });
-
-    container.querySelector('#btn-finalizar').addEventListener('click', finalizarCompra);
-
-    const botoesRemover = container.querySelectorAll('.btn-remover');
-    botoesRemover.forEach(botao => {
-        botao.addEventListener('click', (e) => {
-            const indexRemover = e.target.getAttribute('data-index');
-            sacola.splice(indexRemover, 1);
-            localStorage.setItem('sacola', JSON.stringify(sacola));
-            exibirSacola();
-        });
-    });
 }
 
+function exibirSacola() {
+  const token = localStorage.getItem("token");
+  const sacola = JSON.parse(localStorage.getItem("sacola")) || [];
+
+  const cartGrid = document.getElementById("cart-grid");
+  const summaryItems = document.getElementById("summary-items");
+  const totalValueEl = document.getElementById("total-value");
+  const container = document.querySelector(".cart-container");
+
+  if (!container || !cartGrid || !summaryItems || !totalValueEl) {
+    return;
+  }
+
+  if (!token) {
+    container.innerHTML = `
+      <div style="text-align: center; width: 100%; padding: 50px;">
+        <h2>Sua Sacola</h2>
+        <p>Você precisa estar logado para ver sua sacola.</p>
+        <a href="login.html" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background: #000; color: #fff; text-decoration: none;">Fazer Login</a>
+      </div>
+    `;
+    return;
+  }
+
+  if (sacola.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; width: 100%; padding: 50px;">
+        <h2>Sua Sacola</h2>
+        <p>Sua sacola está vazia. Volte para a página de produtos!</p>
+        <a href="produtos.html" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background: #000; color: #fff; text-decoration: none;">Ver Produtos</a>
+      </div>
+    `;
+    return;
+  }
+
+  cartGrid.innerHTML = "";
+  summaryItems.innerHTML = "";
+  let valorTotal = 0;
+
+  sacola.forEach((produto, index) => {
+    const imagem = produto.imagem_url ? produto.imagem_url : "https://via.placeholder.com/80?text=Sem+Imagem";
+    const preco = parseFloat(produto.preco);
+    const subtotal = preco * produto.quantidade;
+
+    const article = document.createElement("article");
+    article.className = "cart-item";
+    article.innerHTML = `
+      <img src="${imagem}" alt="${produto.nome}" class="cart-item-image">
+      <div class="cart-item-details">
+        <h3 class="cart-item-title">${produto.nome} ${produto.quantidade > 1 ? `(x${produto.quantidade})` : ''}</h3>
+        <span class="cart-item-label">VALOR:</span>
+        <span class="cart-item-price">R$ ${preco.toFixed(2).replace('.', ',')}</span>
+      </div>
+      <button class="btn-remover" data-index="${index}" style="background: none; border: none; color: red; cursor: pointer; font-weight: bold; font-size: 1.2rem; padding: 0 10px;">X</button>
+    `;
+    cartGrid.appendChild(article);
+
+    const summaryRow = document.createElement("div");
+    summaryRow.className = "summary-row";
+    summaryRow.innerHTML = `
+      <span class="summary-name">${produto.nome} ${produto.quantidade > 1 ? `(x${produto.quantidade})` : ''}</span>
+      <span class="summary-price">R$ ${subtotal.toFixed(2).replace('.', ',')}</span>
+    `;
+    summaryItems.appendChild(summaryRow);
+
+    valorTotal += subtotal;
+  });
+
+  totalValueEl.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+
+  let boxSummary = document.querySelector(".summary-box");
+  if (!document.getElementById("btn-finalizar-novo")) {
+     const btnFinalizar = document.createElement("button");
+     btnFinalizar.id = "btn-finalizar-novo";
+     btnFinalizar.innerText = "FINALIZAR COMPRA";
+     btnFinalizar.style.cssText = "width: 100%; background-color: #000; color: #fff; border: none; padding: 15px; cursor: pointer; font-weight: bold; margin-top: 15px; border-radius: 8px;";
+     btnFinalizar.addEventListener('click', finalizarCompra);
+     boxSummary.appendChild(btnFinalizar);
+  }
+
+  const botoesRemover = container.querySelectorAll('.btn-remover');
+  botoesRemover.forEach(botao => {
+      botao.addEventListener('click', (e) => {
+          const indexRemover = e.target.getAttribute('data-index');
+          sacola.splice(indexRemover, 1);
+          localStorage.setItem('sacola', JSON.stringify(sacola));
+          exibirSacola();
+      });
+  });
+}
 async function finalizarCompra() {
-    
+
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -556,14 +1337,44 @@ async function finalizarCompra() {
     }
 }
 
-const isProductPage = window.location.pathname.toLowerCase().endsWith('produtos.html');
+const currentPath = window.location.pathname.toLowerCase();
+const isProductPage = currentPath.endsWith('produtos.html') || currentPath.endsWith('/produtos') || currentPath.endsWith('/produtos/');
 
-    if (isProductPage) {
-      carregarProdutos();
+document.addEventListener("click", (event) => {
+  const alvo = event.target instanceof Element ? event.target.closest(".products-dropdown a") : null;
+  if (!alvo) {
+    return;
+  }
+
+  const href = alvo.getAttribute("href") || "";
+  if (!href.toLowerCase().includes("produtos")) {
+    return;
+  }
+
+  const destinoUrl = new URL(href, window.location.href);
+  const categoria = destinoUrl.searchParams.get("categoria") || "";
+  const destino = `${destinoUrl.pathname}${destinoUrl.search}`;
+
+  sessionStorage.setItem("shopBeautyCategoria", categoria);
+  event.preventDefault();
+
+  if (isProductPage) {
+    const queryAtualizada = categoria ? `?categoria=${encodeURIComponent(categoria)}` : "";
+    history.replaceState({}, "", `${window.location.pathname}${queryAtualizada}`);
+    setCategoriaSelecionada(categoria);
+    return;
+  }
+
+  window.location.assign(destino);
+});
+
+if (isProductPage) {
+  inicializarFiltrosProdutos();
+  carregarProdutos();
 }
 
-const isSacolaPage = window.location.pathname.toLowerCase().endsWith('sacola.html');
+const isSacolaPage = currentPath.endsWith('sacola.html') || currentPath.endsWith('/sacola');
 
-    if (isSacolaPage) {
-      exibirSacola();
+if (isSacolaPage) {
+  exibirSacola();
 }

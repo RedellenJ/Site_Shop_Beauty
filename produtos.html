@@ -24,8 +24,8 @@
         </div>
 
         <div class="search">
-          <input type="text" placeholder="O que você está buscando?" />
-          <button type="button" aria-label="Buscar"><i class="fas fa-search"></i></button>
+          <input id="productSearch" type="text" placeholder="O que você está buscando?" />
+          <button onclick="carregarProdutosPorNome(document.getElementById('productSearch').value)" type="button" aria-label="Buscar"><i class="fas fa-search"></i></button>
         </div>
       </div>
 
@@ -74,12 +74,159 @@
       </ul>
     </nav>
 
-    <main class="page-content">
-      <h1 class="page-title">Produtos</h1>
-      <p class="page-text">Em Construção</p>
+    <div class="breadcrumb">
+      <span>Você está em:</span>
+      <a class="breadcrumb-home" href="index.html">INÍCIO</a>
+      <span class="separator">&gt;</span>
+      <span class="breadcrumb-current">PRODUTOS</span>
+      <span id="breadcrumb-categoria-separator" class="separator" hidden>&gt;</span>
+      <span id="breadcrumb-categoria" class="breadcrumb-current" hidden></span>
+    </div>
+
+    <main class="page-content page-produtos">
+
+      <section class="catalog-top-row">
+        <h1 id="catalog-heading" class="catalog-heading">Produtos</h1>
+        <div class="catalog-order-box">
+          <label for="ordenar-por">ORDENAR POR</label>
+          <select id="ordenar-por">
+            <option value="preco-menor">Menor preço</option>
+            <option value="preco-maior">Maior preço</option>
+            <option value="nome-az">Nome A-Z</option>
+            <option value="nome-za">Nome Z-A</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="catalog-layout" aria-label="Produtos e filtros">
+        <aside class="catalog-filters">
+          <h2>FILTROS</h2>
+
+          <div class="filter-group">
+            <h3>TAMANHO</h3>
+            <label><input class="filtro-tamanho" type="checkbox" value="25" /> 25ml</label>
+            <label><input class="filtro-tamanho" type="checkbox" value="30" /> 30ml</label>
+            <label><input class="filtro-tamanho" type="checkbox" value="50" /> 50ml</label>
+            <label><input class="filtro-tamanho" type="checkbox" value="75" /> 75ml</label>
+            <label><input class="filtro-tamanho" type="checkbox" value="80" /> 80ml</label>
+            <label><input class="filtro-tamanho" type="checkbox" value="100" /> 100ml</label>
+          </div>
+
+          <div class="filter-group">
+            <h3>PREÇO</h3>
+            <div class="price-range">
+              <div class="price-range-labels">
+                <span>DE</span>
+                <span>ATÉ</span>
+              </div>
+              <div class="price-range-inputs">
+                <input id="preco-min" type="text" inputmode="decimal" placeholder="R$ 49,90" aria-label="Preço mínimo" />
+                <input id="preco-max" type="text" inputmode="decimal" placeholder="R$ 159,90" aria-label="Preço máximo" />
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h3>CATEGORIA</h3>
+            <select id="filtro-categoria">
+              <option value="">Todas as categorias</option>
+              <option value="extensao-cilios">Extensão de cílios</option>
+              <option value="perfumes">Perfumes</option>
+              <option value="sobrancelha">Sobrancelha</option>
+              <option value="maquiagens">Maquiagens</option>
+              <option value="hidratantes">Hidratantes</option>
+              <option value="cabelos">Cabelos</option>
+              <option value="skincare">Skincare</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <h3>MARCA</h3>
+            <select id="filtro-marca">
+              <option value="">Todas as marcas</option>
+            </select>
+          </div>
+
+          <button id="limpar-filtros" class="btn-limpar-filtros" type="button">Limpar filtros</button>
+        </aside>
+
+        <section class="catalog-products-area">
+          <p id="produtos-status" class="produtos-status" aria-live="polite"></p>
+          <section id="produtos-grid" class="produtos-grid" aria-label="Lista de produtos"></section>
+        </section>
+      </section>
     </main>
 
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <img src="Img/Logos/Logo1.png" alt="Shop Beauty" />
+          <p>Beleza, cuidado e autoestima em cada detalhe.</p>
+          <p class="footer-address">
+            <i class="fas fa-map-marker-alt"></i> Rua Delfim Moreira 412,
+            Varginha, Brasil CEP - 37070-002
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h3>Institucional</h3>
+          <a href="quem-somos.html">Quem Somos</a>
+          <a href="politica-de-privacidade.html">Política de Privacidade</a>
+          <a href="trocas-devolucoes.html">Trocas e Devoluções</a>
+        </div>
+
+        <div class="footer-links">
+          <h3>Atendimento</h3>
+          <a href="contato.html">Contato</a>
+          <a href="login.html">Minha Conta</a>
+          <a href="sacola.html">Minha Sacola</a>
+        </div>
+
+        <div class="footer-social">
+          <h3>Siga a Shop Beauty</h3>
+          <div class="social-icons">
+            <a
+              href="https://www.instagram.com/beautyshop.vga/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              ><i class="fab fa-instagram"></i
+            ></a>
+            <a
+              href="https://www.tiktok.com/@beautyshop.vga"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="TikTok"
+              ><i class="fab fa-tiktok"></i
+            ></a>
+            <a
+              href="https://api.whatsapp.com/message/XYNFOWQ2GERBK1?autoload=1&app_absent=0"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WhatsApp"
+              ><i class="fab fa-whatsapp"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 Shop Beauty. Todos os direitos reservados.</p>
+      </div>
+    </footer>
+
     <script src="script.js"></script>
+
+    <div vw class="enabled">
+      <div vw-access-button class="active"></div>
+      <div vw-plugin-wrapper>
+        <div class="vw-plugin-top-wrapper"></div>
+      </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+      new window.VLibras.Widget("https://vlibras.gov.br/app");
+    </script>
   </body>
 </html>
 
