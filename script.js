@@ -1487,10 +1487,10 @@ if (logoFundo) logoFundo.style.display = 'none';
 
  if (!token) {
     container.innerHTML = `
-      <div style="text-align: center; width: 100%; padding: 50px; padding-bottom: 150px;">
-        <h2>Sua Sacola</h2>
-        <p>Você precisa estar logado para ver sua sacola.</p>
-        <a href="login.html" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background: #E8A0A0; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 700; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">Fazer Login</a>
+      <div class="cart-empty-state">
+        <h2 class="cart-empty-title">Sua Sacola</h2>
+        <p class="cart-empty-text">Você precisa estar logado para ver sua sacola.</p>
+        <a class="cart-empty-cta" href="login.html">Fazer Login</a>
       </div>
     `;
     return;
@@ -1498,9 +1498,9 @@ if (logoFundo) logoFundo.style.display = 'none';
 
  if (sacola.length === 0) {
     container.innerHTML = `
-      <div style="text-align: center; width: 100%; padding: 50px; padding-bottom: 150px;">
-        <p style="font-size: 1.3rem; margin-bottom: 25px; font-weight: bold;">Sua sacola está vazia. Volte para a página de produtos!</p>
-        <a href="produtos.html" style="display: inline-block; padding: 12px 25px; background: #E8A0A0; color: #fff; text-decoration: none; font-size: 1.1rem; font-weight: bold; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">Ver Produtos</a>
+      <div class="cart-empty-state">
+        <p class="cart-empty-text cart-empty-text--large">Sua sacola está vazia. Volte para a página de produtos!</p>
+        <a class="cart-empty-cta" href="produtos.html">Ver Produtos</a>
       </div>
     `;
     return;
@@ -1530,7 +1530,16 @@ cartGrid.innerHTML = "";
         
         <div class="cart-qty-control">
           <button class="btn-diminuir cart-qty-btn" data-index="${index}" type="button">-</button>
-          <span class="cart-qty-value">${produto.quantidade}</span>
+          <input
+            class="cart-qty-input"
+            data-index="${index}"
+            type="number"
+            min="1"
+            step="1"
+            inputmode="numeric"
+            value="${produto.quantidade}"
+            aria-label="Quantidade de ${produto.nome}"
+          />
           <button class="btn-aumentar cart-qty-btn" data-index="${index}" type="button">+</button>
         </div>
       </div>
@@ -1593,6 +1602,26 @@ cartGrid.innerHTML = "";
           }
       });
   });
+
+        const camposQuantidade = container.querySelectorAll('.cart-qty-input');
+        camposQuantidade.forEach(campo => {
+          campo.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              e.currentTarget.blur();
+            }
+          });
+
+          campo.addEventListener('change', (e) => {
+            const index = Number(e.currentTarget.getAttribute('data-index'));
+            const valorDigitado = Number.parseInt(e.currentTarget.value, 10);
+            const novaQuantidade = Number.isFinite(valorDigitado) && valorDigitado > 0 ? valorDigitado : 1;
+
+            sacola[index].quantidade = novaQuantidade;
+            localStorage.setItem('sacola', JSON.stringify(sacola));
+            exibirSacola();
+          });
+        });
 }
 
 function exibirPopupPedidoConcluido() {

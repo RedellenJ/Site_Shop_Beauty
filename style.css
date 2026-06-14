@@ -12,7 +12,7 @@ body {
 
 html {
   overflow-y: scroll;
-  scrollbar-gutter: stable both-edges;
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -2804,11 +2804,11 @@ body > .footer {
   background-position: center;
   position: absolute;
   left: 50%;
-  top: clamp(320px, 50vh, 520px);
+  top: 430px;
   transform: translate(-50%, -50%);
-  width: clamp(180px, 20vw, 280px);
-  height: clamp(180px, 20vw, 280px);
-  opacity: 0.16;
+  width: clamp(220px, 26vw, 360px);
+  height: clamp(220px, 26vw, 360px);
+  opacity: 0.12;
   pointer-events: none;
   z-index: -1;
 }
@@ -3054,7 +3054,7 @@ footer {
 .cart-qty-control {
   margin-top: 14px;
   display: inline-grid;
-  grid-template-columns: 34px 44px 34px;
+  grid-template-columns: 34px 54px 34px;
   border: 1px solid #d2c0c0;
   border-radius: 10px;
   overflow: hidden;
@@ -3083,6 +3083,26 @@ footer {
   font-size: 1rem;
   font-weight: 700;
   color: #111;
+}
+
+.cart-qty-input {
+  width: 100%;
+  border: 0;
+  outline: none;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111;
+  background-color: #fff;
+  padding: 0;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.cart-qty-input::-webkit-outer-spin-button,
+.cart-qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .btn-remover {
@@ -3233,4 +3253,76 @@ footer {
   .cart-summary-section #btn-finalizar-novo {
     font-size: 1.1rem;
   }
+}
+
+.cart-empty-state {
+  grid-column: 1 / -1;
+  width: min(560px, 100%);
+  min-height: 52vh;
+  margin: 0 auto;
+  padding: 28px 20px 84px;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.cart-empty-state::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  transform: translate(-50%, -50%);
+  width: clamp(220px, 30vw, 380px);
+  height: clamp(220px, 30vw, 380px);
+  background-image: url('Img/Logos/Logo3.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  opacity: 0.12;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.cart-empty-title {
+  margin: 0 0 8px;
+  font-size: clamp(2rem, 1.7rem + 1vw, 2.5rem);
+  font-weight: 700;
+  color: #111;
+}
+
+.cart-empty-text {
+  margin: 0;
+  font-size: 1.9rem;
+  color: #222;
+}
+
+.cart-empty-text--large {
+  margin-bottom: 20px;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.cart-empty-cta {
+  display: inline-block;
+  margin-top: 18px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  background-color: #e8a0a0;
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.05rem;
+  font-weight: 700;
+  box-shadow: 0 5px 14px rgba(99, 44, 44, 0.18);
+}
+
+.cart-empty-cta:hover {
+  opacity: 0.95;
+}
+
+#fundo-logo-sacola {
+  display: none !important;
 }
