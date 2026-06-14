@@ -44,6 +44,9 @@ Login
 Contato
 <img width="1898" height="1079" alt="image" src="https://github.com/user-attachments/assets/8b895612-0f96-4416-b33f-9be1a6ac3d0b" />
 ---
+Barra de pesquisa
+<img width="887" height="621" alt="GifJs1" src="https://github.com/user-attachments/assets/1787564c-f22f-4d37-aeda-ec62fc91d7e4" />
+---
 Rodapé
 <img width="1900" height="341" alt="image" src="https://github.com/user-attachments/assets/49dbb941-c099-476f-8a98-4e43f57420b3" />
 
@@ -52,10 +55,12 @@ Rodapé
 
 - Banner rotativo na página inicial
 - Catálogo de produtos com filtros e busca por nome
+- Barra de pesquisa com sugestões
 - Cadastro e login de clientes
 - Sessão persistida no navegador via token
 - Criação de pedidos com link automático para WhatsApp
 - Páginas institucionais: contato, quem somos, política de privacidade e trocas/devoluções
+- VLibras
 
 ## Stack utilizada
 
@@ -90,6 +95,8 @@ Site_Shop_Beauty/
   politica-de-privacidade.html
   produtos.html
   quem-somos.html
+  recuperar-senha.html
+  resetarSenha.html
   sacola.html
   script.js
   style.css
