@@ -1209,14 +1209,30 @@ function exibirSacola() {
   const summaryItems = document.getElementById("summary-items");
   const totalValueEl = document.getElementById("total-value");
   const container = document.querySelector(".cart-container");
+  const logoFundo = document.querySelector('.sacola-ajuste');
+
+  const fundoLogoSacola = document.getElementById("fundo-logo-sacola");
+  if (fundoLogoSacola) {
+      if (sacola.length === 0) {
+          fundoLogoSacola.classList.add("esconder-fundo");
+      } else {
+          fundoLogoSacola.classList.remove("esconder-fundo");
+      }
+  }
+
+if (!container || !cartGrid || !summaryItems || !totalValueEl) {
+  return;
+}
+
+if (logoFundo) logoFundo.style.display = 'none';
 
   if (!container || !cartGrid || !summaryItems || !totalValueEl) {
     return;
   }
 
-  if (!token) {
+ if (!token) {
     container.innerHTML = `
-      <div style="text-align: center; width: 100%; padding: 50px;">
+      <div style="text-align: center; width: 100%; padding: 50px; padding-bottom: 150px;">
         <h2>Sua Sacola</h2>
         <p>Você precisa estar logado para ver sua sacola.</p>
         <a href="login.html" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background: #000; color: #fff; text-decoration: none;">Fazer Login</a>
@@ -1225,16 +1241,19 @@ function exibirSacola() {
     return;
   }
 
-  if (sacola.length === 0) {
+ if (sacola.length === 0) {
     container.innerHTML = `
-      <div style="text-align: center; width: 100%; padding: 50px;">
-        <h2>Sua Sacola</h2>
-        <p>Sua sacola está vazia. Volte para a página de produtos!</p>
-        <a href="produtos.html" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background: #000; color: #fff; text-decoration: none;">Ver Produtos</a>
+      <div style="text-align: center; width: 100%; padding: 50px; padding-bottom: 150px;">
+        <p style="font-size: 1.3rem; margin-bottom: 25px; font-weight: bold;">Sua sacola está vazia. Volte para a página de produtos!</p>
+        <a href="produtos.html" style="display: inline-block; padding: 12px 25px; background: #E8A0A0; color: #fff; text-decoration: none; font-size: 1.1rem; font-weight: bold; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">Ver Produtos</a>
       </div>
     `;
     return;
   }
+  
+  if (logoFundo) logoFundo.style.display = 'block';
+
+cartGrid.innerHTML = "";
 
   cartGrid.innerHTML = "";
   summaryItems.innerHTML = "";
@@ -1247,14 +1266,21 @@ function exibirSacola() {
 
     const article = document.createElement("article");
     article.className = "cart-item";
+    article.style.position = "relative";
     article.innerHTML = `
       <img src="${imagem}" alt="${produto.nome}" class="cart-item-image">
       <div class="cart-item-details">
-        <h3 class="cart-item-title">${produto.nome} ${produto.quantidade > 1 ? `(x${produto.quantidade})` : ''}</h3>
+        <h3 class="cart-item-title">${produto.nome}</h3>
         <span class="cart-item-label">VALOR:</span>
         <span class="cart-item-price">R$ ${preco.toFixed(2).replace('.', ',')}</span>
+        
+        <div style="display: flex; align-items: center; justify-content: space-between; width: 100px; margin-top: 12px; border: 1px solid #ccc; border-radius: 8px; overflow: hidden; background: #fff;">
+          <button class="btn-diminuir" data-index="${index}" style="background: #f9f9f9; border: none; border-right: 1px solid #ccc; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; color: #333; display: flex; align-items: center; justify-content: center; padding: 0;">-</button>
+          <span style="font-size: 1rem; font-weight: bold; color: #000; flex: 1; text-align: center;">${produto.quantidade}</span>
+          <button class="btn-aumentar" data-index="${index}" style="background: #f9f9f9; border: none; border-left: 1px solid #ccc; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; color: #333; display: flex; align-items: center; justify-content: center; padding: 0;">+</button>
+        </div>
       </div>
-      <button class="btn-remover" data-index="${index}" style="background: none; border: none; color: red; cursor: pointer; font-weight: bold; font-size: 1.2rem; padding: 0 10px;">X</button>
+      <button class="btn-remover" data-index="${index}">X</button>
     `;
     cartGrid.appendChild(article);
 
@@ -1276,7 +1302,7 @@ function exibirSacola() {
      const btnFinalizar = document.createElement("button");
      btnFinalizar.id = "btn-finalizar-novo";
      btnFinalizar.innerText = "FINALIZAR COMPRA";
-     btnFinalizar.style.cssText = "width: 100%; background-color: #000; color: #fff; border: none; padding: 15px; cursor: pointer; font-weight: bold; margin-top: 15px; border-radius: 8px;";
+     btnFinalizar.style.cssText = "width: 100%; background-color: #E8A0A0; color: #fff; border: none; padding: 15px; cursor: pointer; font-weight: bold; font-size: 1.2rem; margin-top: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.3s;";
      btnFinalizar.addEventListener('click', finalizarCompra);
      boxSummary.appendChild(btnFinalizar);
   }
@@ -1288,6 +1314,28 @@ function exibirSacola() {
           sacola.splice(indexRemover, 1);
           localStorage.setItem('sacola', JSON.stringify(sacola));
           exibirSacola();
+
+  const botoesAumentar = container.querySelectorAll('.btn-aumentar');
+  botoesAumentar.forEach(botao => {
+      botao.addEventListener('click', (e) => {
+          const index = e.target.getAttribute('data-index');
+          sacola[index].quantidade += 1;
+          localStorage.setItem('sacola', JSON.stringify(sacola));
+          exibirSacola();
+      });
+  });
+
+  const botoesDiminuir = container.querySelectorAll('.btn-diminuir');
+  botoesDiminuir.forEach(botao => {
+      botao.addEventListener('click', (e) => {
+          const index = e.target.getAttribute('data-index');
+          if (sacola[index].quantidade > 1) {
+              sacola[index].quantidade -= 1;
+              localStorage.setItem('sacola', JSON.stringify(sacola));
+              exibirSacola();
+          }
+      });
+  });
       });
   });
 }
