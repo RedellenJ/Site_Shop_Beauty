@@ -1481,10 +1481,6 @@ if (!container || !cartGrid || !summaryItems || !totalValueEl) {
 
 if (logoFundo) logoFundo.style.display = 'none';
 
-  if (!container || !cartGrid || !summaryItems || !totalValueEl) {
-    return;
-  }
-
  if (!token) {
     container.innerHTML = `
       <div class="cart-empty-state">
@@ -1507,8 +1503,6 @@ if (logoFundo) logoFundo.style.display = 'none';
   }
   
   if (logoFundo) logoFundo.style.display = 'block';
-
-cartGrid.innerHTML = "";
 
   cartGrid.innerHTML = "";
   summaryItems.innerHTML = "";
@@ -1783,7 +1777,7 @@ if (searchInput && searchSuggestions) {
       return;
     }
 
-    debounceTimer = setTimeout(() => buscarSugestoes(q), 300);
+    buscarSugestoes(q)
   });
 
   async function buscarSugestoes(q) {
@@ -1794,6 +1788,7 @@ if (searchInput && searchSuggestions) {
       renderizarSugestoes(comImagem);
     } catch (err) {
       console.error('Erro na busca:', err);
+      showToast("Erro ao buscar produtos. Tente novamente.", "error");
     }
   }
 
@@ -1803,7 +1798,8 @@ if (searchInput && searchSuggestions) {
     searchSuggestions.innerHTML = '';
 
     if (!produtos.length) {
-      fecharSugestoes();
+      searchSuggestions.innerHTML = '<li style="padding: 12px; color: #888; font-size: 14px; cursor: default;">Nenhum produto encontrado.</li>';
+      searchSuggestions.style.display = 'block';
       return;
     }
 
@@ -1827,16 +1823,6 @@ if (searchInput && searchSuggestions) {
     const menuEl = document.querySelector('.menu');
     if (menuEl) menuEl.classList.add('menu--disabled');
   }
-
-  searchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const q = searchInput.value.trim();
-      if (q.length >= 1) {
-        buscarSugestoes(q);
-      }
-    }
-  });
 
   function fecharSugestoes() {
     searchSuggestions.style.display = 'none';
