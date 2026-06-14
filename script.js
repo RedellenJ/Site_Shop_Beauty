@@ -1469,9 +1469,9 @@ function exibirSacola() {
   const fundoLogoSacola = document.getElementById("fundo-logo-sacola");
   if (fundoLogoSacola) {
       if (sacola.length === 0) {
-          fundoLogoSacola.classList.add("esconder-fundo");
+        fundoLogoSacola.classList.remove("esconder-fundo");
       } else {
-          fundoLogoSacola.classList.remove("esconder-fundo");
+        fundoLogoSacola.classList.add("esconder-fundo");
       }
   }
 
@@ -1490,7 +1490,7 @@ if (logoFundo) logoFundo.style.display = 'none';
       <div style="text-align: center; width: 100%; padding: 50px; padding-bottom: 150px;">
         <h2>Sua Sacola</h2>
         <p>Você precisa estar logado para ver sua sacola.</p>
-        <a href="login.html" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background: #000; color: #fff; text-decoration: none;">Fazer Login</a>
+        <a href="login.html" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background: #E8A0A0; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 700; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">Fazer Login</a>
       </div>
     `;
     return;
@@ -1521,7 +1521,6 @@ cartGrid.innerHTML = "";
 
     const article = document.createElement("article");
     article.className = "cart-item";
-    article.style.position = "relative";
     article.innerHTML = `
       <img src="${imagem}" alt="${produto.nome}" class="cart-item-image">
       <div class="cart-item-details">
@@ -1529,10 +1528,10 @@ cartGrid.innerHTML = "";
         <span class="cart-item-label">VALOR:</span>
         <span class="cart-item-price">R$ ${preco.toFixed(2).replace('.', ',')}</span>
         
-        <div style="display: flex; align-items: center; justify-content: space-between; width: 100px; margin-top: 12px; border: 1px solid #ccc; border-radius: 8px; overflow: hidden; background: #fff;">
-          <button class="btn-diminuir" data-index="${index}" style="background: #f9f9f9; border: none; border-right: 1px solid #ccc; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; color: #333; display: flex; align-items: center; justify-content: center; padding: 0;">-</button>
-          <span style="font-size: 1rem; font-weight: bold; color: #000; flex: 1; text-align: center;">${produto.quantidade}</span>
-          <button class="btn-aumentar" data-index="${index}" style="background: #f9f9f9; border: none; border-left: 1px solid #ccc; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; color: #333; display: flex; align-items: center; justify-content: center; padding: 0;">+</button>
+        <div class="cart-qty-control">
+          <button class="btn-diminuir cart-qty-btn" data-index="${index}" type="button">-</button>
+          <span class="cart-qty-value">${produto.quantidade}</span>
+          <button class="btn-aumentar cart-qty-btn" data-index="${index}" type="button">+</button>
         </div>
       </div>
       <button class="btn-remover" data-index="${index}">X</button>
@@ -1557,24 +1556,26 @@ cartGrid.innerHTML = "";
      const btnFinalizar = document.createElement("button");
      btnFinalizar.id = "btn-finalizar-novo";
      btnFinalizar.innerText = "FINALIZAR COMPRA";
-     btnFinalizar.style.cssText = "width: 100%; background-color: #E8A0A0; color: #fff; border: none; padding: 15px; cursor: pointer; font-weight: bold; font-size: 1.2rem; margin-top: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.3s;";
      btnFinalizar.addEventListener('click', finalizarCompra);
      boxSummary.appendChild(btnFinalizar);
   }
 
   const botoesRemover = container.querySelectorAll('.btn-remover');
   botoesRemover.forEach(botao => {
-      botao.addEventListener('click', (e) => {
+      botao.addEventListener('click', () => {
           const indexRemover = Number(botao.getAttribute('data-index'));
           const nomeProduto = formatarTituloTexto(sacola[indexRemover]?.nome) || "Produto";         
           sacola.splice(indexRemover, 1);
           localStorage.setItem('sacola', JSON.stringify(sacola));
           exibirSacola();
+        showToast(`"${nomeProduto}" removido da sacola.`, 'error');
+      });
+    });
 
   const botoesAumentar = container.querySelectorAll('.btn-aumentar');
   botoesAumentar.forEach(botao => {
       botao.addEventListener('click', (e) => {
-          const index = e.target.getAttribute('data-index');
+        const index = Number(e.currentTarget.getAttribute('data-index'));
           sacola[index].quantidade += 1;
           localStorage.setItem('sacola', JSON.stringify(sacola));
           exibirSacola();
@@ -1584,15 +1585,12 @@ cartGrid.innerHTML = "";
   const botoesDiminuir = container.querySelectorAll('.btn-diminuir');
   botoesDiminuir.forEach(botao => {
       botao.addEventListener('click', (e) => {
-          const index = e.target.getAttribute('data-index');
+        const index = Number(e.currentTarget.getAttribute('data-index'));
           if (sacola[index].quantidade > 1) {
               sacola[index].quantidade -= 1;
               localStorage.setItem('sacola', JSON.stringify(sacola));
               exibirSacola();
           }
-      });
-  });
-          showToast(`"${nomeProduto}" removido da sacola.`, 'error');
       });
   });
 }
