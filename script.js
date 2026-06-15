@@ -204,7 +204,7 @@ const popupProdutoState = {
   elementos: null,
 };
 
-const apiBaseUrl = "http://localhost:3000";
+const apiBaseUrl = "http://siteshopbeauty-production.up.railway.app";
 
 const categoriaAliases = {
   "extensao-cilios": ["extensaocilios", "extensaodecilios", "cilios"],
@@ -433,7 +433,7 @@ if (loginForm) {
 
     const endpoint =
       loginForm.getAttribute("data-login-endpoint") ||
-      "http://localhost:3000/loginClientes";
+      "http://siteshopbeauty-production.up.railway.app";
 
     try {
       const response = await fetch(endpoint, {
@@ -501,10 +501,10 @@ if (recuperarForm) {
 
     const endpoint =
       recuperarForm.getAttribute("data-forgot-endpoint") ||
-      "http://localhost:3000/recuperarSenha";
+      "http://siteshopbeauty-production.up.railway.app";
 
     try {
-      const response = await fetch("http://localhost:3000/recuperarSenha", {
+      const response = await fetch("http://siteshopbeauty-production.up.railway.app", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -577,7 +577,7 @@ if (resetarForm) {
 
     const endpoint =
       resetarForm.getAttribute("data-reset-endpoint") ||
-      "http://localhost:3000/resetarSenha";
+      "http://siteshopbeauty-production.up.railway.app";
 
     try {
       const response = await fetch(endpoint, {
@@ -666,7 +666,7 @@ if (registerForm) {
 
     const endpoint =
       registerForm.getAttribute("data-register-endpoint") ||
-      "http://localhost:3000/cadastroClientes";
+      "http://siteshopbeauty-production.up.railway.app";
 
     try {
       const response = await fetch(endpoint, {
@@ -1694,7 +1694,7 @@ async function finalizarCompra() {
     }));
 
     try {
-        const resposta = await fetch('http://localhost:3000/pedidos', {
+        const resposta = await fetch('http://siteshopbeauty-production.up.railway.app', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
