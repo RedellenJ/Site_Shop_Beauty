@@ -9,9 +9,24 @@ const jwt = require('jsonwebtoken')
 const verificaLogin = require('./middleware')
 const crypto = require('crypto')
 const nodemailer = require('nodemailer')
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:5500",
+  "https://shopbeautyvga.netlify.app"
+];
 
 app.use(express.json())
-app.use(cors());
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Bloqueado pelo CORS"));
+  },
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 app.get('/', (req, res) => {
   res.json({ mensagem: 'Servidor rodando!' })
