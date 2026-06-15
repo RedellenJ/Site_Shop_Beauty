@@ -152,7 +152,7 @@ app.post('/recuperarSenha', async (req, res) => {
     subject: 'Recuperação de senha - Shop Beauty',
     html: `
       <p>Clique no link abaixo para redefinir sua senha:</p>
-      <a href="http://localhost:5500/resetarSenha.html?token=${token}">
+      <a href="https://shopbeautyvga.netlify.app/resetarSenha.html?token=${token}">
         Redefinir senha
       </a>
       <p>Este link expira em 1 hora.</p>`
