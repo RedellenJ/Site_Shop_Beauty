@@ -104,10 +104,10 @@ app.post('/loginClientes', async (req, res) => {
     const { data, error } = await query
     if (error) return res.status(500).json({erro: "Erro ao realizar o login." })
 
-      if (data.length === 0) return res.status(404).json({ erro: "Usuário não encontrado! Faça seu cadastro ou tente novamente." })
+      if (data.length === 0) return res.status(404).json({ erro: "Dados incorretos ou não encontrados! Faça seu cadastro ou tente novamente." })
 
     const resultado = await bcrypt.compare(senha, data[0].senha)
-      if (resultado != true) return res.status(401).json({ erro: "Senha incorreta! Tente novamente." })
+      if (resultado != true) return res.status(401).json({ erro: "Dados incorretos! Tente novamente." })
 
     const token = jwt.sign({email: email}, process.env.JWT_SECRET, {expiresIn: '6h'})
 
@@ -124,7 +124,7 @@ app.post('/recuperarSenha', async (req, res) => {
 
     const { data, error } = await query
 
-      if (data.length === 0) return res.status(404).json({ erro: "E-mail informado incorretamente! Confira e tente novamente." })
+      if (data.length === 0) return res.status(404).json({ erro: "Dados incorretos! Confira e tente novamente." })
 
     const token = crypto.randomBytes(32).toString('hex')
     const expira = new Date(Date.now() + 60 * 60 * 1000)
