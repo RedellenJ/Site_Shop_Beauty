@@ -139,23 +139,9 @@ app.post('/recuperarSenha', async (req, res) => {
 
         if (erroEmail) return res.status(500).json({ erro: "Erro ao gerar o token." })
         
-  try {
-    await resend.emails.send({
-      from: 'Shop Beauty <onboarding@resend.dev>',
-      to: email,
-      subject: 'Recuperação de senha - Shop Beauty',
-      html:
-        `<p>Clique no link abaixo para redefinir sua senha:</p>
-        <a href="https://shopbeautyvga.netlify.app/resetarSenha.html?token=${token}">
-          Redefinir senha
-        </a>
-        <p>Este link expira em 1 hora.</p>`
-    });
-    res.status(201).json({ mensagem: "O e-mail para a recuperação da senha foi enviado!" })
-  } catch (erroEnvio) {
-    console.error(erroEnvio);
-    res.status(500).json({ erro: "Erro ao enviar o e-mail. Tente novamente." })
-  }          
+    const link = `https://shopbeautyvga.netlify.app/resetarSenha.html?token=${token}`;
+
+    return res.status(200).json({ mensagem: "Link de recuperação gerado!", link })
 })
 
 app.post('/resetarSenha', async (req, res) => {
@@ -263,7 +249,7 @@ Obs: ${observacao}`
 
     const link = `https://wa.me/553584693046?text=${encodeURIComponent(mensagemFormatada)}`
 
-  res.status(201).json({ mensagem: "Pedido realizado com sucesso!", link})
+  res.status(201).json({ mensagem: "Pedido realizado com sucesso!", link })
 })
 
 app.listen(PORT, () => {
