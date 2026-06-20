@@ -8,8 +8,6 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const verificaLogin = require('./middleware')
 const crypto = require('crypto')
-const { Resend } = require('resend');
-const resend = new Resend(process.env.RESEND_API_KEY);
 const allowedOrigins = [
   "http://localhost:3000",
   "http://127.0.0.1:5500",
