@@ -138,13 +138,15 @@ app.post('/recuperarSenha', async (req, res) => {
 
         if (erroEmail) return res.status(500).json({ erro: "Erro ao gerar o token." })
         
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
-  })
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    })
 
   const opcoes = {
     from: process.env.EMAIL_USER,
