@@ -1675,6 +1675,8 @@ function exibirPopupPedidoConcluido() {
 async function finalizarCompra() {
 
     const token = localStorage.getItem('token');
+  const campoObservacao = document.getElementById('observacao-pedido');
+  const observacao = campoObservacao ? campoObservacao.value.trim() : '';
 
     if (!token) {
         showToast('Você precisa estar logado para finalizar a compra.', 'error');
@@ -1700,7 +1702,10 @@ async function finalizarCompra() {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ itens, observacao: null })
+          body: JSON.stringify({
+            itens,
+            observacao: observacao || null
+          })
         });
 
         const dados = await resposta.json();
