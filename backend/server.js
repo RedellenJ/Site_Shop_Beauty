@@ -24,7 +24,7 @@ app.use(cors({
     }
     return callback(new Error("Bloqueado pelo CORS"));
   },
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
