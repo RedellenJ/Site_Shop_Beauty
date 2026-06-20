@@ -8,7 +8,8 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const verificaLogin = require('./middleware')
 const crypto = require('crypto')
-const nodemailer = require('nodemailer')
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 const allowedOrigins = [
   "http://localhost:3000",
   "http://127.0.0.1:5500",
@@ -138,35 +139,23 @@ app.post('/recuperarSenha', async (req, res) => {
 
         if (erroEmail) return res.status(500).json({ erro: "Erro ao gerar o token." })
         
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    })
-
-  const opcoes = {
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: 'Recuperação de senha - Shop Beauty',
-    html: `
-      <p>Clique no link abaixo para redefinir sua senha:</p>
-      <a href="https://shopbeautyvga.netlify.app/resetarSenha.html?token=${token}">
-        Redefinir senha
-      </a>
-      <p>Este link expira em 1 hora.</p>`
-}
-
   try {
-    await transporter.sendMail(opcoes)
+    await resend.emails.send({
+      from: 'Shop Beauty <onboarding@resend.dev>',
+      to: email,
+      subject: 'Recuperação de senha - Shop Beauty',
+      html:
+        `<p>Clique no link abaixo para redefinir sua senha:</p>
+        <a href="https://shopbeautyvga.netlify.app/resetarSenha.html?token=${token}">
+          Redefinir senha
+        </a>
+        <p>Este link expira em 1 hora.</p>`
+    });
     res.status(201).json({ mensagem: "O e-mail para a recuperação da senha foi enviado!" })
   } catch (erroEnvio) {
+    console.error(erroEnvio);
     res.status(500).json({ erro: "Erro ao enviar o e-mail. Tente novamente." })
-  }
-
+  }          
 })
 
 app.post('/resetarSenha', async (req, res) => {
