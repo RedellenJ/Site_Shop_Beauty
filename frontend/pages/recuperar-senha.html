@@ -1,27 +1,25 @@
-﻿<!doctype html>
+<!-- <!doctype html>
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shop Beauty | Contato</title>
+    <title>Shop Beauty | Recuperar Senha</title>
 
-    <link rel="icon" type="image/png" href="Img/Logos/Logo3.png" />
-
-    <link rel="stylesheet" href="style.css" />
-
+    <link rel="icon" type="image/png" href="../assets/img/logos/logo3.png" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
   </head>
-  <body>
+  <body class="login-page forgot-page">
     <div class="top-bar"></div>
 
     <header class="header">
       <div class="center-group">
         <div class="logo">
           <a href="index.html" aria-label="Ir para a página inicial">
-            <img src="Img/Logos/Logo1.png" alt="Logo" />
+            <img src="../assets/img/logos/logo1.png" alt="Logo" />
           </a>
         </div>
 
@@ -75,7 +73,7 @@
             <a href="produtos.html?categoria=skincare">Skincare</a>
           </div>
         </li>
-        <li><a class="active" href="contato.html">CONTATO</a></li>
+        <li><a href="contato.html">CONTATO</a></li>
         <li><a href="trocas-devolucoes.html">TROCAS OU DEVOLUÇÕES</a></li>
         <li>
           <a href="politica-de-privacidade.html">POLÍTICA DE PRIVACIDADE</a>
@@ -84,101 +82,64 @@
       </ul>
     </nav>
 
-    <div class="breadcrumb">
+    <div class="breadcrumb breadcrumb-auth">
       <span>Você está em:</span>
       <a class="breadcrumb-home" href="index.html">INÍCIO</a>
       <span class="separator">&gt;</span>
-      <span class="breadcrumb-current">CONTATO</span>
+      <a class="breadcrumb-account" href="login.html">MINHA CONTA</a>
+      <span class="separator">&gt;</span>
+      <span class="breadcrumb-current">RECUPERAR SENHA</span>
     </div>
 
-    <section class="contact-hero">
-      <img class="contact-bg" src="Img/Logos/Logo3.png" alt="Logo de fundo" />
+    <main class="login-main">
+      <section class="login-hero">
+        <div class="login-column login-form-box">
+          <h1>RECUPERAR SENHA</h1>
 
-      <div class="contact-column contact-info">
-        <h1>NOSSOS CONTATOS</h1>
-
-        <div class="contact-list">
-          <a
-            class="contact-item"
-            href="https://www.instagram.com/beautyshop.vga/"
-            target="_blank"
-            rel="noopener noreferrer"
+          <form
+            id="recuperar-form"
+            class="login-form"
+            data-forgot-endpoint="https://siteshopbeauty-production.up.railway.app/recuperarSenha"
           >
-            <i class="fab fa-instagram"></i>
-            <span>beautyshop.vga</span>
-          </a>
+            <label for="forgot-email">E-mail</label>
+            <input
+              id="recuperar-email"
+              name="email"
+              type="email"
+              placeholder="ex.: email@gmail.com.br"
+              autocomplete="email"
+              required
+            />
 
-          <a
-            class="contact-item"
-            href="https://api.whatsapp.com/message/XYNFOWQ2GERBK1?autoload=1&app_absent=0"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <i class="fab fa-whatsapp"></i>
-            <span>(35) 98469-3046</span>
-          </a>
+            <p class="register-text forgot-description">
+              Enviaremos um link para redefinir sua senha no e-mail informado.
+            </p>
 
-          <a class="contact-item" href="mailto:marinavanoniap@gmail.com">
-            <i class="fas fa-envelope"></i>
-            <span>marinavanoniap@gmail.com</span>
-          </a>
+            <button class="login-submit" type="submit">ENVIAR LINK</button>
+
+            <p class="register-text">
+              Lembrou sua senha?
+              <a href="login.html">Voltar para login</a>
+            </p>
+
+            <p
+              id="recuperar-feedback"
+              class="login-feedback"
+              aria-live="polite"
+            ></p>
+          </form>
         </div>
 
-        <h2>NOSSA LOCALIZAÇÃO</h2>
-        <div class="contact-location">
-          <i class="fas fa-map-marker-alt"></i>
-          <span>Rua Delfim Moreira 412, Varginha, Brasil CEP - 37070-002</span>
+        <div class="login-column login-brand-box">
+          <img src="../assets/img/logos/logo1.png" alt="Shop Beauty" />
         </div>
-      </div>
-
-      <div class="contact-column contact-form-box">
-        <h2>NOS ENVIE UMA MENSAGEM</h2>
-
-        <form class="contact-form">
-          <label for="nome">Seu nome</label>
-          <input
-            id="nome"
-            type="text"
-            placeholder="ex.: Marina Vanoni"
-            required
-          />
-
-          <label for="email">E-mail</label>
-          <input
-            id="email"
-            type="email"
-            placeholder="ex.: email@gmail.com.br"
-            required
-          />
-
-          <label for="telefone">Telefone</label>
-          <input
-            id="telefone"
-            type="tel"
-            inputmode="numeric"
-            pattern="[0-9]{11}"
-            minlength="11"
-            maxlength="11"
-            placeholder="ex.: (35) 99977-8866"
-            required
-          />
-
-          <label for="mensagem">Sua mensagem</label>
-          <textarea
-            id="mensagem"
-            placeholder="ex.: Sua mensagem"
-            required
-          ></textarea>
-
-          <button type="submit">ENVIAR MENSAGEM</button>
-        </form>
-      </div>
-    </section>
+      </section>
+    </main>
 
     <footer class="footer">
       <div class="footer-content">
         <div class="footer-brand">
-          <img src="Img/Logos/Logo1.png" alt="Shop Beauty" />
+          <img src="frontend/assets/img/logos/logo1.png" alt="Shop Beauty" />
           <p>Beleza, cuidado e autoestima em cada detalhe.</p>
           <p class="footer-address">
             <i class="fas fa-map-marker-alt"></i> Rua Delfim Moreira 412,
@@ -233,7 +194,7 @@
       </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="../assets/js/script.js"></script>
 
     <div vw class="enabled">
       <div vw-access-button class="active"></div>
@@ -246,9 +207,4 @@
       new window.VLibras.Widget("https://vlibras.gov.br/app");
     </script>
   </body>
-</html>
-
-
-
-
-
+</html> -->

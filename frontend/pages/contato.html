@@ -3,10 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shop Beauty | Produtos</title>
+    <title>Shop Beauty | Contato</title>
 
-    <link rel="icon" type="image/png" href="Img/Logos/Logo3.png" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/png" href="../assets/img/logos/logo3.png" />
+
+    <link rel="stylesheet" href="../assets/css/style.css" />
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -19,7 +21,7 @@
       <div class="center-group">
         <div class="logo">
           <a href="index.html" aria-label="Ir para a página inicial">
-            <img src="Img/Logos/Logo1.png" alt="Logo" />
+            <img src="../assets/img/logos/logo1.png" alt="Logo" />
           </a>
         </div>
 
@@ -73,7 +75,7 @@
             <a href="produtos.html?categoria=skincare">Skincare</a>
           </div>
         </li>
-        <li><a href="contato.html">CONTATO</a></li>
+        <li><a class="active" href="contato.html">CONTATO</a></li>
         <li><a href="trocas-devolucoes.html">TROCAS OU DEVOLUÇÕES</a></li>
         <li>
           <a href="politica-de-privacidade.html">POLÍTICA DE PRIVACIDADE</a>
@@ -86,89 +88,97 @@
       <span>Você está em:</span>
       <a class="breadcrumb-home" href="index.html">INÍCIO</a>
       <span class="separator">&gt;</span>
-      <span class="breadcrumb-current">PRODUTOS</span>
-      <span id="breadcrumb-categoria-separator" class="separator" hidden>&gt;</span>
-      <span id="breadcrumb-categoria" class="breadcrumb-current" hidden></span>
+      <span class="breadcrumb-current">CONTATO</span>
     </div>
 
-    <main class="page-content page-produtos">
+    <section class="contact-hero">
+      <img class="contact-bg" src="../assets/img/logos/logo3.png" alt="Logo de fundo" />
 
-      <section class="catalog-top-row">
-        <h1 id="catalog-heading" class="catalog-heading">Produtos</h1>
-        <div class="catalog-order-box">
-          <label for="ordenar-por">ORDENAR POR</label>
-          <select id="ordenar-por">
-            <option value="preco-menor">Menor preço</option>
-            <option value="preco-maior">Maior preço</option>
-            <option value="nome-az">Nome A-Z</option>
-            <option value="nome-za">Nome Z-A</option>
-          </select>
+      <div class="contact-column contact-info">
+        <h1>NOSSOS CONTATOS</h1>
+
+        <div class="contact-list">
+          <a
+            class="contact-item"
+            href="https://www.instagram.com/beautyshop.vga/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="fab fa-instagram"></i>
+            <span>beautyshop.vga</span>
+          </a>
+
+          <a
+            class="contact-item"
+            href="https://api.whatsapp.com/message/XYNFOWQ2GERBK1?autoload=1&app_absent=0"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="fab fa-whatsapp"></i>
+            <span>(35) 98469-3046</span>
+          </a>
+
+          <a class="contact-item" href="mailto:marinavanoniap@gmail.com">
+            <i class="fas fa-envelope"></i>
+            <span>marinavanoniap@gmail.com</span>
+          </a>
         </div>
-      </section>
 
-      <section class="catalog-layout" aria-label="Produtos e filtros">
-        <aside class="catalog-filters">
-          <h2>FILTROS</h2>
+        <h2>NOSSA LOCALIZAÇÃO</h2>
+        <div class="contact-location">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>Rua Delfim Moreira 412, Varginha, Brasil CEP - 37070-002</span>
+        </div>
+      </div>
 
-          <div class="filter-group">
-            <h3>TAMANHO</h3>
-            <label><input class="filtro-tamanho" type="checkbox" value="25" /> 25ml</label>
-            <label><input class="filtro-tamanho" type="checkbox" value="30" /> 30ml</label>
-            <label><input class="filtro-tamanho" type="checkbox" value="50" /> 50ml</label>
-            <label><input class="filtro-tamanho" type="checkbox" value="75" /> 75ml</label>
-            <label><input class="filtro-tamanho" type="checkbox" value="80" /> 80ml</label>
-            <label><input class="filtro-tamanho" type="checkbox" value="100" /> 100ml</label>
-          </div>
+      <div class="contact-column contact-form-box">
+        <h2>NOS ENVIE UMA MENSAGEM</h2>
 
-          <div class="filter-group">
-            <h3>PREÇO</h3>
-            <div class="price-range">
-              <div class="price-range-labels">
-                <span>DE</span>
-                <span>ATÉ</span>
-              </div>
-              <div class="price-range-inputs">
-                <input id="preco-min" type="text" inputmode="decimal" placeholder="R$ 49,90" aria-label="Preço mínimo" />
-                <input id="preco-max" type="text" inputmode="decimal" placeholder="R$ 159,90" aria-label="Preço máximo" />
-              </div>
-            </div>
-          </div>
+        <form class="contact-form">
+          <label for="nome">Seu nome</label>
+          <input
+            id="nome"
+            type="text"
+            placeholder="ex.: Marina Vanoni"
+            required
+          />
 
-          <div class="filter-group">
-            <h3>CATEGORIA</h3>
-            <select id="filtro-categoria">
-              <option value="">Todas as categorias</option>
-              <option value="extensao-cilios">Extensão de cílios</option>
-              <option value="perfumes">Perfumes</option>
-              <option value="sobrancelha">Sobrancelha</option>
-              <option value="maquiagens">Maquiagens</option>
-              <option value="hidratantes">Hidratantes</option>
-              <option value="cabelos">Cabelos</option>
-              <option value="skincare">Skincare</option>
-            </select>
-          </div>
+          <label for="email">E-mail</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="ex.: email@gmail.com.br"
+            required
+          />
 
-          <div class="filter-group">
-            <h3>MARCA</h3>
-            <select id="filtro-marca">
-              <option value="">Todas as marcas</option>
-            </select>
-          </div>
+          <label for="telefone">Telefone</label>
+          <input
+            id="telefone"
+            type="tel"
+            inputmode="numeric"
+            pattern="[0-9]{11}"
+            minlength="11"
+            maxlength="11"
+            placeholder="ex.: (35) 99977-8866"
+            required
+          />
 
-          <button id="limpar-filtros" class="btn-limpar-filtros" type="button">Limpar filtros</button>
-        </aside>
+          <label for="mensagem">Sua mensagem</label>
+          <textarea
+            id="mensagem"
+            placeholder="ex.: Sua mensagem"
+            required
+          ></textarea>
 
-        <section class="catalog-products-area">
-          <p id="produtos-status" class="produtos-status" aria-live="polite"></p>
-          <section id="produtos-grid" class="produtos-grid" aria-label="Lista de produtos"></section>
-        </section>
-      </section>
-    </main>
+          <button type="submit">ENVIAR MENSAGEM</button>
+        </form>
+      </div>
+    </section>
 
     <footer class="footer">
       <div class="footer-content">
         <div class="footer-brand">
-          <img src="Img/Logos/Logo1.png" alt="Shop Beauty" />
+          <img src="../assets/img/logos/logo1.png" alt="Shop Beauty" />
           <p>Beleza, cuidado e autoestima em cada detalhe.</p>
           <p class="footer-address">
             <i class="fas fa-map-marker-alt"></i> Rua Delfim Moreira 412,
@@ -223,7 +233,7 @@
       </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="../assets/js/script.js"></script>
 
     <div vw class="enabled">
       <div vw-access-button class="active"></div>
@@ -237,8 +247,3 @@
     </script>
   </body>
 </html>
-
-
-
-
-

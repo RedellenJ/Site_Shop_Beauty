@@ -2798,7 +2798,7 @@ body > .footer {
 }
 
 #fundo-logo-sacola {
-  background-image: url('Img/Logos/Logo3.png');
+  background-image: url('frontend/assets/img/logos/logo3.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -3278,7 +3278,7 @@ footer {
   transform: translate(-50%, -50%);
   width: clamp(220px, 30vw, 380px);
   height: clamp(220px, 30vw, 380px);
-  background-image: url('Img/Logos/Logo3.png');
+  background-image: url('frontend/assets/img/logos/logo3.png');
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;

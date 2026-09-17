@@ -82,11 +82,11 @@ const dots = document.querySelectorAll(".dots span");
 const menuLinks = document.querySelectorAll(".menu a");
 
 const images = [
-  "Img/Background/Background_1.jpg",
-  "Img/Background/Background_2.jpg",
-  "Img/Background/Background_3.jpg",
-  "Img/Background/Background_4.jpg",
-  "Img/Background/Background_5.jpg",
+  "../assets/img/background/background1.jpg",
+  "../assets/img/background/background2.jpg",
+  "../assets/img/background/background3.jpg",
+  "../assets/img/background/background4.jpg",
+  "../assets/img/background/background5.jpg",
 ];
 
 let currentIndex = 0;

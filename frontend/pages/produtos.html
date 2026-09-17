@@ -3,12 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shop Beauty | Início</title>
+    <title>Shop Beauty | Produtos</title>
 
-    <link rel="icon" type="image/png" href="Img/Logos/Logo3.png" />
-
-    <link rel="stylesheet" href="style.css" />
-
+    <link rel="icon" type="image/png" href="../assets/img/logos/logo3.png" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -21,7 +19,7 @@
       <div class="center-group">
         <div class="logo">
           <a href="index.html" aria-label="Ir para a página inicial">
-            <img src="Img/Logos/Logo1.png" alt="Logo" />
+            <img src="../assets/img/logos/logo1.png" alt="Logo" />
           </a>
         </div>
 
@@ -84,28 +82,93 @@
       </ul>
     </nav>
 
-    <section class="banner">
-      <div class="arrow left">
-        <i class="fas fa-arrow-left"></i>
-      </div>
-
-      <div class="arrow right">
-        <i class="fas fa-arrow-right"></i>
-      </div>
-    </section>
-
-    <div class="dots">
-      <span></span>
-      <span class="active"></span>
-      <span></span>
-      <span></span>
-      <span></span>
+    <div class="breadcrumb">
+      <span>Você está em:</span>
+      <a class="breadcrumb-home" href="index.html">INÍCIO</a>
+      <span class="separator">&gt;</span>
+      <span class="breadcrumb-current">PRODUTOS</span>
+      <span id="breadcrumb-categoria-separator" class="separator" hidden>&gt;</span>
+      <span id="breadcrumb-categoria" class="breadcrumb-current" hidden></span>
     </div>
+
+    <main class="page-content page-produtos">
+
+      <section class="catalog-top-row">
+        <h1 id="catalog-heading" class="catalog-heading">Produtos</h1>
+        <div class="catalog-order-box">
+          <label for="ordenar-por">ORDENAR POR</label>
+          <select id="ordenar-por">
+            <option value="preco-menor">Menor preço</option>
+            <option value="preco-maior">Maior preço</option>
+            <option value="nome-az">Nome A-Z</option>
+            <option value="nome-za">Nome Z-A</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="catalog-layout" aria-label="Produtos e filtros">
+        <aside class="catalog-filters">
+          <h2>FILTROS</h2>
+
+          <div class="filter-group">
+            <h3>TAMANHO</h3>
+            <label><input class="filtro-tamanho" type="checkbox" value="25" /> 25ml</label>
+            <label><input class="filtro-tamanho" type="checkbox" value="30" /> 30ml</label>
+            <label><input class="filtro-tamanho" type="checkbox" value="50" /> 50ml</label>
+            <label><input class="filtro-tamanho" type="checkbox" value="75" /> 75ml</label>
+            <label><input class="filtro-tamanho" type="checkbox" value="80" /> 80ml</label>
+            <label><input class="filtro-tamanho" type="checkbox" value="100" /> 100ml</label>
+          </div>
+
+          <div class="filter-group">
+            <h3>PREÇO</h3>
+            <div class="price-range">
+              <div class="price-range-labels">
+                <span>DE</span>
+                <span>ATÉ</span>
+              </div>
+              <div class="price-range-inputs">
+                <input id="preco-min" type="text" inputmode="decimal" placeholder="R$ 49,90" aria-label="Preço mínimo" />
+                <input id="preco-max" type="text" inputmode="decimal" placeholder="R$ 159,90" aria-label="Preço máximo" />
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h3>CATEGORIA</h3>
+            <select id="filtro-categoria">
+              <option value="">Todas as categorias</option>
+              <option value="extensao-cilios">Extensão de cílios</option>
+              <option value="perfumes">Perfumes</option>
+              <option value="sobrancelha">Sobrancelha</option>
+              <option value="maquiagens">Maquiagens</option>
+              <option value="hidratantes">Hidratantes</option>
+              <option value="cabelos">Cabelos</option>
+              <option value="skincare">Skincare</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <h3>MARCA</h3>
+            <select id="filtro-marca">
+              <option value="">Todas as marcas</option>
+            </select>
+          </div>
+
+          <button id="limpar-filtros" class="btn-limpar-filtros" type="button">Limpar filtros</button>
+        </aside>
+
+        <section class="catalog-products-area">
+          <p id="produtos-status" class="produtos-status" aria-live="polite"></p>
+          <section id="produtos-grid" class="produtos-grid" aria-label="Lista de produtos"></section>
+        </section>
+      </section>
+    </main>
 
     <footer class="footer">
       <div class="footer-content">
         <div class="footer-brand">
-          <img src="Img/Logos/Logo1.png" alt="Shop Beauty" />
+          <img src="../assets/img/logos/logo1.png" alt="Shop Beauty" />
           <p>Beleza, cuidado e autoestima em cada detalhe.</p>
           <p class="footer-address">
             <i class="fas fa-map-marker-alt"></i> Rua Delfim Moreira 412,
@@ -160,7 +223,7 @@
       </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="../assets/js/script.js"></script>
 
     <div vw class="enabled">
       <div vw-access-button class="active"></div>
@@ -174,8 +237,3 @@
     </script>
   </body>
 </html>
-
-
-
-
-

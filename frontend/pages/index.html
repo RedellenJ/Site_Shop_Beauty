@@ -3,25 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shop Beauty | Sacola</title>
+    <title>Shop Beauty | Início</title>
 
-    <link rel="icon" type="image/png" href="Img/Logos/Logo3.png" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/png" href="../assets/img/logos/logo3.png" />
+
+    <link rel="stylesheet" href="../assets/css/style.css" />
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
   </head>
   <body>
-    <div id="fundo-logo-sacola"></div>
-    
     <div class="top-bar"></div>
-    
+
     <header class="header">
       <div class="center-group">
         <div class="logo">
           <a href="index.html" aria-label="Ir para a página inicial">
-            <img src="Img/Logos/Logo1.png" alt="Logo" />
+            <img src="../assets/img/logos/logo1.png" alt="Logo" />
           </a>
         </div>
 
@@ -64,7 +64,9 @@
         <li class="menu-item-has-dropdown">
           <a href="produtos.html">PRODUTOS</a>
           <div class="products-dropdown" aria-label="Categorias de produtos">
-            <a href="produtos.html?categoria=extensao-cilios">Extensão de cílios</a>
+            <a href="produtos.html?categoria=extensao-cilios"
+              >Extensão de cílios</a
+            >
             <a href="produtos.html?categoria=perfumes">Perfumes</a>
             <a href="produtos.html?categoria=sobrancelha">Sobrancelha</a>
             <a href="produtos.html?categoria=maquiagens">Maquiagens</a>
@@ -81,50 +83,29 @@
         <li><a href="quem-somos.html">QUEM SOMOS</a></li>
       </ul>
     </nav>
-    <div class="breadcrumb">
-    <span>Você está em:</span>
-    <a class="breadcrumb-home" href="index.html">INÍCIO</a>
-    <span class="separator">&gt;</span>
-    <span class="breadcrumb-current">SACOLA</span>
-</div>
-    <main class="cart-container">
-      <section class="cart-items-section">
-        <h2 class="section-title">PRODUTOS NA SACOLA</h2>
-        
-        <div class="cart-grid" id="cart-grid">
-        </div>
-      </section>
 
-      <aside class="cart-summary-section">
-        <h2 class="section-title">VALOR TOTAL DA COMPRA</h2>
-        
-        <div class="summary-box">
-          <div class="summary-items" id="summary-items">
-          </div>
+    <section class="banner">
+      <div class="arrow left">
+        <i class="fas fa-arrow-left"></i>
+      </div>
 
-          <div class="summary-observation">
-            <label for="observacao-pedido" class="summary-observation-label">Observação do pedido:</label>
-            <textarea
-              id="observacao-pedido"
-              class="summary-observation-input"
-              placeholder="Digite uma observação para o pedido"
-              maxlength="300"
-            ></textarea>
-          </div>
-          
-          <hr class="summary-divider">
-          
-          <div class="summary-total">
-            <span class="total-label">TOTAL A PAGAR:</span>
-            <span class="total-value" id="total-value"> R$ 0,00</span>
-          </div>
-        </div>
-      </aside>
-    </main>
+      <div class="arrow right">
+        <i class="fas fa-arrow-right"></i>
+      </div>
+    </section>
+
+    <div class="dots">
+      <span></span>
+      <span class="active"></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
     <footer class="footer">
       <div class="footer-content">
         <div class="footer-brand">
-          <img src="Img/Logos/Logo1.png" alt="Shop Beauty" />
+          <img src="../assets/img/logos/logo1.png" alt="Shop Beauty" />
           <p>Beleza, cuidado e autoestima em cada detalhe.</p>
           <p class="footer-address">
             <i class="fas fa-map-marker-alt"></i> Rua Delfim Moreira 412,
@@ -178,7 +159,8 @@
         <p>© 2026 Shop Beauty. Todos os direitos reservados.</p>
       </div>
     </footer>
-    <script src="script.js"></script>
+
+    <script src="../assets/js/script.js"></script>
 
     <div vw class="enabled">
       <div vw-access-button class="active"></div>
@@ -190,7 +172,5 @@
     <script>
       new window.VLibras.Widget("https://vlibras.gov.br/app");
     </script>
-
   </body>
-
 </html>
