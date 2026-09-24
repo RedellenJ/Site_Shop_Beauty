@@ -81,26 +81,48 @@ Rodapé
 ```text
 Site_Shop_Beauty/
   backend/
-    middleware.js
-    server.js
-    supabase.js
+    node_modules/
+    .env
     package.json
-  Img/
-    Background/
-    Logos/
-  cadastro.html
-  contato.html
-  index.html
-  login.html
-  politica-de-privacidade.html
-  produtos.html
-  quem-somos.html
-  recuperar-senha.html
-  resetarSenha.html
-  sacola.html
-  script.js
-  style.css
-  trocas-devolucoes.html
+    package-lock.json
+    server.js
+    src/
+      app.js
+      config/
+        supabase.js
+      middlewares/
+        auth.js
+      routers/
+        clientes-routes.js
+        produtos-routes.js
+        pedidos-routes.js
+      controllers/
+        clientes-controller.js
+        produtos-controller.js
+        pedidos-controller.js
+  frontend/
+    assets/
+      css/
+        style.css
+      js/
+        script.js
+      img/
+        logos/
+        backgrounds/
+    pages/
+      cadastro.html
+      contato.html
+      index.html
+      login.html
+      politica-de-privacidade.html
+      produtos.html
+      quem-somos.html
+      recuperar-senha.html
+      resetar-senha.html
+      sacola.html
+      trocas-devolucoes.html
+  .gitignore
+  README.md
 ```
 
 ## Como rodar localmente

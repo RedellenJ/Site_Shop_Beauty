@@ -204,7 +204,7 @@ const popupProdutoState = {
   elementos: null,
 };
 
-const apiBaseUrl = "https://siteshopbeauty-production.up.railway.app";
+const apiBaseUrl = "https://site-shop-beauty.onrender.com";
 
 const categoriaAliases = {
   "extensao-cilios": ["extensaocilios", "extensaodecilios", "cilios"],
@@ -433,7 +433,7 @@ if (loginForm) {
 
     const endpoint =
       loginForm.getAttribute("data-login-endpoint") ||
-      "https://siteshopbeauty-production.up.railway.app/loginClientes";
+      "https://site-shop-beauty.onrender.com/loginClientes";
 
     try {
       const response = await fetch(endpoint, {
@@ -501,10 +501,10 @@ if (recuperarForm) {
 
     const endpoint =
       recuperarForm.getAttribute("data-forgot-endpoint") ||
-      "https://siteshopbeauty-production.up.railway.app/recuperarSenha";
+      "https://site-shop-beauty.onrender.com/recuperarSenha";
 
     try {
-      const response = await fetch("https://siteshopbeauty-production.up.railway.app/recuperarSenha", {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -576,7 +576,7 @@ if (resetarForm) {
 
     const endpoint =
       resetarForm.getAttribute("data-reset-endpoint") ||
-      "https://siteshopbeauty-production.up.railway.app/resetarSenha";
+      "https://site-shop-beauty.onrender.com/resetarSenha";
 
     try {
       const response = await fetch(endpoint, {
@@ -665,7 +665,7 @@ if (registerForm) {
 
     const endpoint =
       registerForm.getAttribute("data-register-endpoint") ||
-      "https://siteshopbeauty-production.up.railway.app/cadastroClientes";
+      "https://site-shop-beauty.onrender.com/cadastroClientes";
 
     try {
       const response = await fetch(endpoint, {
@@ -1695,7 +1695,7 @@ async function finalizarCompra() {
     }));
 
     try {
-        const resposta = await fetch('https://siteshopbeauty-production.up.railway.app/pedidos', {
+        const resposta = await fetch(`${apiBaseUrl}/pedidos`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
