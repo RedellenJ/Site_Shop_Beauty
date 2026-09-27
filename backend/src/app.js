@@ -10,7 +10,7 @@ const app = express()
 const allowedOrigins = [
   "http://localhost:3000",
   "http://127.0.0.1:5500",
-  "https://site-shop-beauty.onrender.com"
+  "https://shopbeautyvga.netlify.app"
 ];
 
 app.use(express.json())
