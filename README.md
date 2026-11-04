@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Status-Em%20Desenvolvimento-239415?style=for-the-badge" alt="Status" />
+  <img src="https://img.shields.io/badge/Status-Concluído-239415?style=for-the-badge" alt="Status" />
   <img src="https://img.shields.io/badge/Frontend-HTML%20%7C%20CSS%20%7C%20JavaScript-344532?style=for-the-badge" alt="Frontend" />
   <img src="https://img.shields.io/badge/Backend-Node.js%20%7C%20Express-000000?style=for-the-badge" alt="Backend" />
   <img src="https://img.shields.io/badge/Database-Supabase-239415?style=for-the-badge" alt="Supabase" />
@@ -41,6 +41,12 @@ Cadastro
 Login
 <img width="1900" height="1077" alt="image" src="https://github.com/user-attachments/assets/fee7a959-cfca-4b8f-b385-657f9a822b85" />
 ---
+Recuperar senha
+- Pendente...
+---
+Redefinir senha
+- Pendente...
+----
 Contato
 <img width="1898" height="1079" alt="image" src="https://github.com/user-attachments/assets/8b895612-0f96-4416-b33f-9be1a6ac3d0b" />
 ---
@@ -56,7 +62,7 @@ Rodapé
 - Banner rotativo na página inicial
 - Catálogo de produtos com filtros e busca por nome
 - Barra de pesquisa com sugestões
-- Cadastro e login de clientes
+- Cadastro, login e recuperação/redefinição de senha de clientes
 - Sessão persistida no navegador via token
 - Criação de pedidos com link automático para WhatsApp
 - Páginas institucionais: contato, quem somos, política de privacidade e trocas/devoluções
