@@ -518,10 +518,8 @@ if (recuperarForm) {
         );
       }
 
-      showToast("Redirecionando para redefinição de senha...", "success");
-      setTimeout(() => {
-        window.location.href = payload.link;
-      }, 2000);
+      showToast("E-mail de recuperação enviado com sucesso! Verifique sua caixa de entrada.", "success");
+      recuperarForm.reset();
 
       recuperarForm.reset();
     } catch (error) {
