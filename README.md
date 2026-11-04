@@ -9,6 +9,10 @@
 </p>
 
 <p align="center">
+  🌐 <strong>Site hospedado:</strong> <a href="https://shopbeautyvga.netlify.app/">https://shopbeautyvga.netlify.app</a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Status-Concluído-239415?style=for-the-badge" alt="Status" />
   <img src="https://img.shields.io/badge/Frontend-HTML%20%7C%20CSS%20%7C%20JavaScript-344532?style=for-the-badge" alt="Frontend" />
   <img src="https://img.shields.io/badge/Backend-Node.js%20%7C%20Express-000000?style=for-the-badge" alt="Backend" />
@@ -171,7 +175,7 @@ PORT=3000
 
 ## Próximos passos
 
-- publicar deploy do frontend e backend
+- Decidir novos rumos e melhorias futuras juntamente com o cliente.
 
 # Autores
 
