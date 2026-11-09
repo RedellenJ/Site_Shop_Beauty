@@ -45,10 +45,12 @@ Cadastro
 Login
 <img width="1900" height="1077" alt="image" src="https://github.com/user-attachments/assets/fee7a959-cfca-4b8f-b385-657f9a822b85" />
 ---
-## Recuperar senha
+Recuperar senha
 <img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/c418c565-5cab-47e4-8ff0-fa571fb05283" />
-
-----
+---
+Resetar Senha
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/0b7e83ad-0492-48ac-addb-4ecf4e4091e8" />
+---
 Contato
 <img width="1898" height="1079" alt="image" src="https://github.com/user-attachments/assets/8b895612-0f96-4416-b33f-9be1a6ac3d0b" />
 ---
